@@ -5,9 +5,21 @@
     <artifactId>AbsenRFID</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+        <dependency> 
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+    </dependencies>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
-        <exec.mainClass>com.mycompany.absenrfid.AbsenRFID</exec.mainClass>
-    </properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>11</maven.compiler.release>  <!-- Ganti dengan versi yang kamu inginkan, seperti 1.8 atau 11 -->
+    <exec.mainClass>com.mycompany.absenrfid.AbsenRFID</exec.mainClass>
+</properties>
 </project>
