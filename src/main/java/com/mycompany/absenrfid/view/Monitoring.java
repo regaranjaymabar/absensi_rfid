@@ -177,7 +177,8 @@ public class Monitoring extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNavVisitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavVisitorActionPerformed
-        // TODO add your handling code here:
+new DataVisitor().setVisible(true); 
+this.dispose();         // TODO add your handling code here:
     }//GEN-LAST:event_btnNavVisitorActionPerformed
 
     private void cbFilterKelasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterKelasActionPerformed
