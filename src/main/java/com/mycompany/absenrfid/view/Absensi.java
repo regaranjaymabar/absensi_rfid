@@ -16,7 +16,28 @@ public class Absensi extends javax.swing.JFrame {
      * Creates new form Absensi
      */
     public Absensi() {
-        initComponents();
+    initComponents();
+    
+    setupNavigation();
+    }
+    
+    private void setupNavigation() {
+    
+    btnNavMonitoring.addActionListener(e ->{
+        new Monitoring().setVisible(true);
+        this.dispose();
+    });
+    
+    btnNavVisitor.addActionListener(e ->{
+        new DataVisitor().setVisible(true);
+        this.dispose();
+    });
+    
+    btnNavPengaturan.addActionListener(e ->{
+        new Pengaturan().setVisible(true);
+        this.dispose();
+    });
+    
     }
 
     /**

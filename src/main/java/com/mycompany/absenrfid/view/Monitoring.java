@@ -17,8 +17,29 @@ public class Monitoring extends javax.swing.JFrame {
      */
     public Monitoring() {
         initComponents();
+        
+        setupNavigation();
+        
         loadData();
-    }
+}
+    
+    private void setupNavigation() {
+        
+    btnNavVisitor.addActionListener(e ->{
+        new DataVisitor().setVisible(true);
+        this.dispose();
+    });
+    
+    btnNavAbsensi.addActionListener(e ->{
+       new Absensi().setVisible(true);
+       this.dispose();
+    });
+    
+    btnNavPengaturan.addActionListener(e ->{
+        new Pengaturan().setVisible(true);
+        this.dispose();
+    });
+}
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -17,7 +17,27 @@ public class DataVisitor extends javax.swing.JFrame {
      */
     public DataVisitor() {
         initComponents();
-    }
+        
+    setupNavigation();
+}
+    private void setupNavigation() {
+    
+    btnNavMonitoring.addActionListener(e ->{
+        new Monitoring().setVisible(true);
+        this.dispose();
+    });
+    
+    btnNavPengaturan.addActionListener(e ->{
+        new Pengaturan().setVisible(true);
+        this.dispose();
+    });
+    
+    btnNavAbsensi.addActionListener(e ->{
+       new Absensi().setVisible(true);
+       this.dispose();
+    });
+    
+}
 
     /**
      * This method is called from within the constructor to initialize the form.

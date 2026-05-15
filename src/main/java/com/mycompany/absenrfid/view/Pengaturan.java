@@ -17,7 +17,27 @@ public class Pengaturan extends javax.swing.JFrame {
      */
     public Pengaturan() {
         initComponents();
+        setupNavigation();
+}
+    private void setupNavigation(){
+        
+        btnNavMonitoring.addActionListener(e ->{
+        new Monitoring().setVisible(true);
+        this.dispose();
+    });
+        
+        btnNavAbsensi.addActionListener(e ->{
+       new Absensi().setVisible(true);
+       this.dispose();
+    });
+        
+        btnNavVisitor.addActionListener(e ->{
+        new DataVisitor().setVisible(true);
+        this.dispose();
+    });
+        
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
