@@ -91,7 +91,7 @@ try {
     String password = new String(txtPassword.getPassword());
 
     // 2. Hubungkan ke database menggunakan MongoManager
-    com.mongodb.client.MongoDatabase db = com.mycompany.absenrfid.objects.MongoManager.getDatabase();
+    com.mongodb.client.MongoDatabase db = com.mycompany.absenrfid.util.MongoManager.getDatabase();
     com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Admin");
 
     // 3. Cari data yang cocok

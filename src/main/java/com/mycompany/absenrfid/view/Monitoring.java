@@ -266,7 +266,7 @@ private void loadData() {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblMonitoring.getModel();
         model.setRowCount(0);
         try {
-            com.mongodb.client.MongoDatabase db = com.mycompany.absenrfid.objects.MongoManager.getDatabase();
+            com.mongodb.client.MongoDatabase db = com.mycompany.absenrfid.util.MongoManager.getDatabase();
             com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("LogAbsensi");
             for (org.bson.Document doc : col.find()) {
                 Object[] row = {

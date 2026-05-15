@@ -9,7 +9,7 @@ package absenRFID.DAO;
  * @author FAIZAL ISMAN
  */
 import com.mongodb.client.MongoCollection;
-import com.mycompany.absenrfid.objects.MongoManager;
+import com.mycompany.absenrfid.util.MongoManager;
 import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.List;
