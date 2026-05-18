@@ -14,7 +14,7 @@ import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericDAO<T> implements BaseDAO<T> {
+public abstract class GenericDAO<T> implements BaseDAO<T> {
     private final MongoCollection<T> collection;
     private final Class<T> clazz;
 
