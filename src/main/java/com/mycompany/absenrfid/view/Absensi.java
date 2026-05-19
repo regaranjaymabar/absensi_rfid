@@ -12,15 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-
-
 /**
- *
- * @author user
+ * Absensi - Laporan absensi dengan filter dan export CSV
+ * @author NEXA
  */
 public class Absensi extends javax.swing.JFrame {
 
@@ -34,7 +28,7 @@ public class Absensi extends javax.swing.JFrame {
         JScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataAbsensi("");
     }
-    
+
     private void loadLogo() {
         try {
             ImageIcon icon = new ImageIcon(getClass().getResource("/Logo Profil.png"));
@@ -44,7 +38,8 @@ public class Absensi extends javax.swing.JFrame {
             System.out.println("Gagal memuat logo: " + e.getMessage());
         }
     }
-    
+
+    // ── Ambil data dari MongoDB ───────────────────────────────────
     private List<Document> ambilData(String keyword) {
         MongoCollection<Document> col =
             MongoManager.getDatabase().getCollection("LogAbsensi");
@@ -67,7 +62,8 @@ public class Absensi extends javax.swing.JFrame {
         }
         return hasil;
     }
-    
+
+    // ── Tampilkan kartu merah ─────────────────────────────────────
     private void muatDataAbsensi(String keyword) {
         pnlCardContainer.removeAll();
         pnlCardContainer.setBackground(new Color(230, 230, 230));
@@ -90,7 +86,8 @@ public class Absensi extends javax.swing.JFrame {
         pnlCardContainer.revalidate();
         pnlCardContainer.repaint();
     }
-    
+
+    // ── Buat satu kartu merah ─────────────────────────────────────
     private JPanel buatKartu(Document doc) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -101,16 +98,17 @@ public class Absensi extends javax.swing.JFrame {
             BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
             BorderFactory.createEmptyBorder(8, 10, 8, 10)
         ));
-        card.add(buatLabel("Waktu: " + nvl(doc.getString("waktu")),       Font.PLAIN, 11, new Color(190, 190, 190)));
+        card.add(buatLabel("🕐 " + nvl(doc.getString("waktu")),       Font.PLAIN, 11, new Color(190, 190, 190)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("NIM: " + nvl(doc.getString("nim")),    Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("🎓 NIM: " + nvl(doc.getString("nim")),    Font.PLAIN, 11, new Color(210, 210, 210)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("Nama: " + nvl(doc.getString("nama")),         Font.BOLD,  12, Color.WHITE));
+        card.add(buatLabel("👤 " + nvl(doc.getString("nama")),         Font.BOLD,  12, Color.WHITE));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("Kelas: " + nvl(doc.getString("kelas")), Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("📚 Kelas: " + nvl(doc.getString("kelas")), Font.PLAIN, 11, new Color(210, 210, 210)));
         return card;
     }
 
+    // ── Export CSV ────────────────────────────────────────────────
     private void exportCSV() {
         JFileChooser fc = new JFileChooser();
         fc.setSelectedFile(new java.io.File("absensi_export.csv"));
@@ -139,100 +137,98 @@ public class Absensi extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlSidebar = new javax.swing.JPanel();
+        lblLogo = new javax.swing.JLabel();
+        btnNavPengaturan = new javax.swing.JButton();
+        btnNavMonitoring = new javax.swing.JButton();
+        btnNavVisitor = new javax.swing.JButton();
+        btnNavAbsensi = new javax.swing.JButton();
+        pnlHeader = new javax.swing.JPanel();
+        lblTitle = new javax.swing.JLabel();
+        lblSubtitle = new javax.swing.JLabel();
+        lblAdminName = new javax.swing.JLabel();
+        lblAdminProfile = new javax.swing.JLabel();
+        pnlContent = new javax.swing.JPanel();
+        pnlVisitorCard = new javax.swing.JPanel();
+        lblVisitorCount = new javax.swing.JLabel();
+        btnSimpanFilter = new javax.swing.JButton();
+        lblVisitorLabel = new javax.swing.JLabel();
+        JScrollPane = new javax.swing.JScrollPane();
+        pnlCardContainer = new javax.swing.JPanel();
+        lblTgl = new javax.swing.JLabel();
+        btnExportcsv = new javax.swing.JButton();
+        btnTampilkanAbsen = new javax.swing.JButton();
+        jDate = new com.toedter.calendar.JDateChooser();
+        cbFilterProdi = new javax.swing.JComboBox<>();
+        cbFilterKelas = new javax.swing.JComboBox<>();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         pnlSidebar.setBackground(new java.awt.Color(102, 0, 0));
         pnlSidebar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Logo Profil.png"))); // NOI18N
-        lblLogo.setPreferredSize(new java.awt.Dimension(180, 90));
         pnlSidebar.add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 130, 100));
 
-        btnNavPengaturan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNavPengaturan.setFont(new java.awt.Font("Segoe UI", 1, 12));
         btnNavPengaturan.setText("Pengaturan");
-        btnNavPengaturan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNavPengaturanActionPerformed(evt);
-            }
-        });
+        btnNavPengaturan.addActionListener(evt -> btnNavPengaturanActionPerformed(evt));
         pnlSidebar.add(btnNavPengaturan, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 160, 30));
 
-        btnNavMonitoring.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNavMonitoring.setFont(new java.awt.Font("Segoe UI", 1, 12));
         btnNavMonitoring.setText("Monitoring");
-        btnNavMonitoring.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNavMonitoringActionPerformed(evt);
-            }
-        });
+        btnNavMonitoring.addActionListener(evt -> btnNavMonitoringActionPerformed(evt));
         pnlSidebar.add(btnNavMonitoring, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 160, 30));
 
-        btnNavVisitor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNavVisitor.setFont(new java.awt.Font("Segoe UI", 1, 12));
         btnNavVisitor.setText("Data Visitor");
-        btnNavVisitor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNavVisitorActionPerformed(evt);
-            }
-        });
+        btnNavVisitor.addActionListener(evt -> btnNavVisitorActionPerformed(evt));
         pnlSidebar.add(btnNavVisitor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 160, 30));
 
-        btnNavAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNavAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 12));
         btnNavAbsensi.setText("Absensi");
-        btnNavAbsensi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNavAbsensiActionPerformed(evt);
-            }
-        });
+        btnNavAbsensi.setFocusPainted(false);
+        btnNavAbsensi.setBorderPainted(false);
+        btnNavAbsensi.addActionListener(evt -> btnNavAbsensiActionPerformed(evt));
         pnlSidebar.add(btnNavAbsensi, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, 160, 30));
 
         getContentPane().add(pnlSidebar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 720));
 
         pnlHeader.setBackground(new java.awt.Color(153, 0, 0));
         pnlHeader.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblTitle.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setFont(new java.awt.Font("Arial", 1, 24));
+        lblTitle.setForeground(java.awt.Color.WHITE);
         lblTitle.setText("Absensi");
         pnlHeader.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
-
-        lblSubtitle.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        lblSubtitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblSubtitle.setFont(new java.awt.Font("Arial", 0, 12));
+        lblSubtitle.setForeground(java.awt.Color.WHITE);
         lblSubtitle.setText("Absensi Dan Laporan hasil absen");
         pnlHeader.add(lblSubtitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
-
-        lblAdminName.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        lblAdminName.setForeground(new java.awt.Color(255, 255, 255));
+        lblAdminName.setFont(new java.awt.Font("Arial", 1, 12));
+        lblAdminName.setForeground(java.awt.Color.WHITE);
         lblAdminName.setText("Admin");
         pnlHeader.add(lblAdminName, new org.netbeans.lib.awtextra.AbsoluteConstraints(952, 40, -1, 20));
-
-        lblAdminProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profil.png"))); // NOI18N
+        lblAdminProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profil.png")));
         pnlHeader.add(lblAdminProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 30, 40, 40));
-
         getContentPane().add(pnlHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 1060, 100));
 
-        pnlContent.setBackground(new java.awt.Color(255, 255, 255));
+        pnlContent.setBackground(java.awt.Color.WHITE);
         pnlContent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblVisitorCount.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
-        lblVisitorCount.setText("4");
+        lblVisitorCount.setFont(new java.awt.Font("Arial", 1, 48));
+        lblVisitorCount.setText("0");
         pnlVisitorCard.add(lblVisitorCount);
-
         pnlContent.add(pnlVisitorCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 200, 60));
 
         btnSimpanFilter.setBackground(new java.awt.Color(51, 204, 0));
         btnSimpanFilter.setText("Simpan");
-        btnSimpanFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSimpanFilterActionPerformed(evt);
-            }
-        });
+        btnSimpanFilter.addActionListener(evt -> btnSimpanFilterActionPerformed(evt));
         pnlContent.add(btnSimpanFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 40, -1, -1));
 
-        lblVisitorLabel.setText("Jumlah Visitor");
+        lblVisitorLabel.setText("Jumlah Data Absensi");
         pnlContent.add(lblVisitorLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, 20));
 
         JScrollPane.setBackground(new java.awt.Color(153, 153, 153));
-
         pnlCardContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         JScrollPane.setViewportView(pnlCardContainer);
-
         pnlContent.add(JScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 1020, 420));
 
         lblTgl.setText("Tanggal");
@@ -240,41 +236,25 @@ public class Absensi extends javax.swing.JFrame {
 
         btnExportcsv.setBackground(new java.awt.Color(102, 102, 255));
         btnExportcsv.setText("Export CSV");
-        btnExportcsv.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExportcsvActionPerformed(evt);
-            }
-        });
+        btnExportcsv.addActionListener(evt -> btnExportcsvActionPerformed(evt));
         pnlContent.add(btnExportcsv, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 130, -1, 30));
 
         btnTampilkanAbsen.setBackground(new java.awt.Color(255, 255, 0));
         btnTampilkanAbsen.setText("Tampilkan Menu Absen");
-        btnTampilkanAbsen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTampilkanAbsenActionPerformed(evt);
-            }
-        });
+        btnTampilkanAbsen.addActionListener(evt -> btnTampilkanAbsenActionPerformed(evt));
         pnlContent.add(btnTampilkanAbsen, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 120, 160, 40));
 
         jDate.setAutoscrolls(true);
         pnlContent.add(jDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 140, -1));
 
         cbFilterProdi.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Jurusan", "Teknik Informatika", "Teknik Komputer", "Teknik Mesin", "Teknik Elektro" }));
-        cbFilterProdi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbFilterProdiActionPerformed(evt);
-            }
-        });
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Jurusan","Teknik Informatika","Teknik Komputer","Teknik Mesin","Teknik Elektro"}));
+        cbFilterProdi.addActionListener(evt -> cbFilterProdiActionPerformed(evt));
         pnlContent.add(cbFilterProdi, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 130, -1));
 
         cbFilterKelas.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kelas", "4 A", "4 B", "4 C", "4 D" }));
-        cbFilterKelas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbFilterKelasActionPerformed(evt);
-            }
-        });
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Kelas","4 A","4 B","4 C","4 D"}));
+        cbFilterKelas.addActionListener(evt -> cbFilterKelasActionPerformed(evt));
         pnlContent.add(cbFilterKelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 40, -1, -1));
 
         getContentPane().add(pnlContent, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 1060, 620));
@@ -283,52 +263,47 @@ public class Absensi extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNavMonitoringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavMonitoringActionPerformed
-        new Monitoring().setVisible(true); this.dispose();       // TODO add your handling code here:
+        new Monitoring().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavMonitoringActionPerformed
 
     private void btnNavVisitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavVisitorActionPerformed
-        new DataVisitor().setVisible(true); this.dispose(); // TODO add your handling code here:
+        new DataVisitor().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavVisitorActionPerformed
 
     private void btnExportcsvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportcsvActionPerformed
-        exportCSV();        // TODO add your handling code here:
+        exportCSV();
     }//GEN-LAST:event_btnExportcsvActionPerformed
 
     private void btnSimpanFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanFilterActionPerformed
         String k = (String) cbFilterKelas.getSelectedItem();
-        muatDataAbsensi((k == null || k.equals("Kelas")) ? "" : k.trim());        // TODO add your handling code here:
+        muatDataAbsensi((k == null || k.equals("Kelas")) ? "" : k.trim());
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
 
     private void btnTampilkanAbsenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanAbsenActionPerformed
-        muatDataAbsensi("");        // TODO add your handling code here:
+        muatDataAbsensi(""); // tampilkan semua data
     }//GEN-LAST:event_btnTampilkanAbsenActionPerformed
 
     private void btnNavAbsensiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavAbsensiActionPerformed
-        // TODO add your handling code here:
+        // sudah di halaman ini
     }//GEN-LAST:event_btnNavAbsensiActionPerformed
 
     private void btnNavPengaturanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavPengaturanActionPerformed
-        new Pengaturan().setVisible(true); this.dispose();        // TODO add your handling code here:
+        new Pengaturan().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavPengaturanActionPerformed
 
     private void cbFilterProdiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterProdiActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_cbFilterProdiActionPerformed
 
     private void cbFilterKelasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterKelasActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_cbFilterKelasActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) { javax.swing.UIManager.setLookAndFeel(info.getClassName()); break; }
             }
         } catch (Exception ex) { logger.log(java.util.logging.Level.SEVERE, null, ex); }
-        java.awt.EventQueue.invokeLater(() -> new com.mycompany.absenrfid.view.Absensi().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Absensi().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -104,6 +104,11 @@ public class EditVisitor extends javax.swing.JDialog {
         btnBatal.setBackground(new java.awt.Color(204, 0, 0));
         btnBatal.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBatal.setText("Batal");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
         pnlWadah.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, -1, -1));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 0));
@@ -128,6 +133,10 @@ public class EditVisitor extends javax.swing.JDialog {
     private void TextFieldNimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextFieldNimActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TextFieldNimActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBatalActionPerformed
 
     /**
      * @param args the command line arguments
