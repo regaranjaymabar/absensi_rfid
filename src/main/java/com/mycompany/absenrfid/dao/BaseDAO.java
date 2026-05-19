@@ -1,4 +1,4 @@
-package absenRFID.DAO;
+package com.mycompany.absenrfid.dao;
 
 import java.util.List;
 import org.bson.conversions.Bson;

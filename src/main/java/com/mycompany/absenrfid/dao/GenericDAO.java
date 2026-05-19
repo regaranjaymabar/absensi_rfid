@@ -1,24 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package absenRFID.DAO;
+package com.mycompany.absenrfid.dao;
 
-/**
- *
- * @author FAIZAL ISMAN
- */
 import com.mongodb.client.MongoCollection;
 import com.mycompany.absenrfid.util.MongoManager;
 import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GenericDAO<T> implements BaseDAO<T> {
+/**
+ * GenericDAO - implementasi operasi CRUD ke MongoDB
+ * Mengikuti pola yang sama dengan punya dosen (KaryawanService)
+ * @author user
+ */
+public class GenericDAO<T> implements BaseDAO<T> {
     private final MongoCollection<T> collection;
     private final Class<T> clazz;
 
-    // Konstruktor menerima nama koleksi dan kelas entitas untuk mapping otomatis
     public GenericDAO(String collectionName, Class<T> clazz) {
         this.clazz = clazz;
         this.collection = MongoManager.getDatabase().getCollection(collectionName, clazz);
@@ -52,5 +48,10 @@ public abstract class GenericDAO<T> implements BaseDAO<T> {
     @Override
     public List<T> findMany(Bson filter) {
         return collection.find(filter).into(new ArrayList<>());
+    }
+
+    @Override
+    public long countAll() {
+        return collection.countDocuments();
     }
 }

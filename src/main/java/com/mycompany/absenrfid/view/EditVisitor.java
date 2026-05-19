@@ -182,4 +182,8 @@ public class EditVisitor extends javax.swing.JDialog {
     private javax.swing.JLabel lblUID;
     private javax.swing.JPanel pnlWadah;
     // End of variables declaration//GEN-END:variables
+
+    void setNim(String nim) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -6,8 +6,8 @@ package com.mycompany.absensirfid.services;
 
 /**
  *
- * @author FAIZAL ISMAN
+ * @author user
  */
-public class VisitorService {
+public class SerialService {
     
 }
