@@ -120,13 +120,13 @@ public class DataVisitor extends javax.swing.JFrame {
             BorderFactory.createEmptyBorder(8, 10, 6, 10)
         ));
 
-        card.add(buatLabel("👤 " + nama,         Font.BOLD,  12, Color.WHITE));
+        card.add(buatLabel("Nama: " + nama,         Font.BOLD,  12, Color.WHITE));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("🎓 NIM: " + nim,      Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("NIM: " + nim,      Font.PLAIN, 11, new Color(210, 210, 210)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("📚 Kelas: " + kelas,  Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("Kelas: " + kelas,  Font.PLAIN, 11, new Color(210, 210, 210)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("📡 UID: " + uid,       Font.PLAIN, 10, new Color(190, 190, 190)));
+        card.add(buatLabel("UID: " + uid,       Font.PLAIN, 10, new Color(190, 190, 190)));
         card.add(Box.createVerticalStrut(6));
 
         // Panel tombol Edit & Hapus

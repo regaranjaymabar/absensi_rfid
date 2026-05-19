@@ -98,13 +98,13 @@ public class Absensi extends javax.swing.JFrame {
             BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
             BorderFactory.createEmptyBorder(8, 10, 8, 10)
         ));
-        card.add(buatLabel("🕐 " + nvl(doc.getString("waktu")),       Font.PLAIN, 11, new Color(190, 190, 190)));
+        card.add(buatLabel("Waktu: " + nvl(doc.getString("waktu")),       Font.PLAIN, 11, new Color(190, 190, 190)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("🎓 NIM: " + nvl(doc.getString("nim")),    Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("NIM: " + nvl(doc.getString("nim")),    Font.PLAIN, 11, new Color(210, 210, 210)));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("👤 " + nvl(doc.getString("nama")),         Font.BOLD,  12, Color.WHITE));
+        card.add(buatLabel("Nama: " + nvl(doc.getString("nama")),         Font.BOLD,  12, Color.WHITE));
         card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("📚 Kelas: " + nvl(doc.getString("kelas")), Font.PLAIN, 11, new Color(210, 210, 210)));
+        card.add(buatLabel("Kelas: " + nvl(doc.getString("kelas")), Font.PLAIN, 11, new Color(210, 210, 210)));
         return card;
     }
 

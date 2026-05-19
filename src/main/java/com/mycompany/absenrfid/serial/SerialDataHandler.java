@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.mycompany.absenrfid.serial;
 
 /**
- *
- * @author FAIZAL ISMAN
+ * Interface untuk menangani data yang diterima dari port serial (RFID)
+ * Mengikuti pola dosen: generic <T> agar fleksibel
+ * @param <T>
  */
-public interface SerialDataHandler {
-    
+public interface SerialDataHandler<T> {
+    void onDataReceived(T data);
 }
