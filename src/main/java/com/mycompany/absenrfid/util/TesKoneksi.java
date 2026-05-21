@@ -1,4 +1,4 @@
-package com.mycompany.absenrfid.objects;
+package com.mycompany.absenrfid.util;
 
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
