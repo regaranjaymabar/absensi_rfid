@@ -1,19 +1,65 @@
 package com.mycompany.absenrfid.view;
 
+import com.mycompany.absenrfid.dao.GenericDAO;
 import com.mycompany.absenrfid.objects.Visitor;
-import com.mycompany.absenrfid.services.VisitorService;
 
+/**
+ *
+ * @author Regar
+ */
 public class TambahVisitor extends javax.swing.JDialog {
-
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TambahVisitor.class.getName());
+    private final GenericDAO<Visitor> visitorDAO = new GenericDAO<>("Visitors", Visitor.class);
 
     public TambahVisitor(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
         initComponents();
     }
 
-    TambahVisitor() {
-        throw new UnsupportedOperationException("Not supported yet.");
+  private void simpanData() {
+        // 1. Ambil data dari text field ke dalam variabel
+        String nim = TextFieldNim.getText().trim();
+        String nama = TextFieldNama.getText().trim();
+        String jurusan = TextFieldJurusan.getText().trim();
+        String kelas = TextFieldKelas.getText().trim();
+        String uid = TextFieldUID.getText().trim();
+
+        // 2. Validasi Input agar tidak kosong
+        if (nim.isEmpty() || nama.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "NIM dan Nama wajib diisi!", "Peringatan", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            // 3. Masukkan data ke objek Visitor
+            Visitor v = new Visitor();
+            v.setNim(nim);
+            v.setNama(nama);
+            v.setJurusan(jurusan);
+            v.setKelas(kelas);
+            v.setUid_rfid(uid);
+            
+            // 4. Simpan langsung menggunakan visitorDAO (versi awal Anda)
+            visitorDAO.save(v);
+            
+            // 5. Notifikasi sukses dan tutup form
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Data berhasil disimpan!", "Informasi", 
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Gagal menyimpan data ke database!\nError: " + e.getMessage(), "Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+  
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {
+        dispose(); 
     }
 
     @SuppressWarnings("unchecked")
@@ -90,13 +136,21 @@ public class TambahVisitor extends javax.swing.JDialog {
         btnBatal.setBackground(new java.awt.Color(204, 0, 0));
         btnBatal.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBatal.setText("Batal");
-        btnBatal.addActionListener(evt -> dispose());
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
         pnlWadah.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, -1, -1));
 
         btnSimpan.setBackground(new java.awt.Color(0, 255, 0));
         btnSimpan.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnSimpan.setText("Simpan");
-        btnSimpan.addActionListener(evt -> btnSimpanActionPerformed(evt));
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
         pnlWadah.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -114,26 +168,7 @@ public class TambahVisitor extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // Ambil data dari field dan simpan ke MongoDB via VisitorService
-        // Mengikuti pola btnSaveActionPerformed di AdminPage dosen
-        Visitor v = new Visitor();
-        v.setNim(TextFieldNim.getText().trim());
-        v.setNama(TextFieldNama.getText().trim());
-        v.setJurusan(TextFieldJurusan.getText().trim());
-        v.setKelas(TextFieldKelas.getText().trim());
-        v.setUid_rfid(TextFieldUID.getText().trim());
-
-        if (v.getNim().isEmpty() || v.getNama().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "NIM dan Nama tidak boleh kosong!", "Validasi",
-                javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        VisitorService service = new VisitorService();
-        service.tambah(v);
-        javax.swing.JOptionPane.showMessageDialog(this, "Data visitor berhasil disimpan!");
-        dispose();
+       simpanData();
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     public static void main(String args[]) {
@@ -163,8 +198,8 @@ public class TambahVisitor extends javax.swing.JDialog {
     private javax.swing.JTextField TextFieldNama;
     private javax.swing.JTextField TextFieldNim;
     private javax.swing.JTextField TextFieldUID;
-    private javax.swing.JButton btnBatal;
-    private javax.swing.JButton btnSimpan;
+    public javax.swing.JButton btnBatal;
+    public javax.swing.JButton btnSimpan;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JLabel lblJurusan;
     private javax.swing.JLabel lblKelas;

@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GenericDAO - implementasi operasi CRUD ke MongoDB
- * Mengikuti pola yang sama dengan punya dosen (KaryawanService)
- * @author user
+ * @author
  */
 public class GenericDAO<T> implements BaseDAO<T> {
     private final MongoCollection<T> collection;
