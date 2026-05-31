@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.absenrfid.view;
-
+import com.mycompany.absenrfid.services.AuthService;
+import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 
 /**
@@ -84,35 +85,7 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-try {
-    // 1. Ambil input dari textfield
-    String username = txtUsername.getText();
-    // Mengambil password dari JPasswordField
-    String password = new String(txtPassword.getPassword());
-
-    // 2. Hubungkan ke database menggunakan MongoManager
-    com.mongodb.client.MongoDatabase db = com.mycompany.absenrfid.util.MongoManager.getDatabase();
-    com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Admin");
-
-    // 3. Cari data yang cocok
-    org.bson.Document query = new org.bson.Document("username", username)
-                                    .append("password", password);
-    org.bson.Document user = col.find(query).first();
-
-    // 4. Cek hasil pencarian
-    if (user != null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Login Berhasil!");
-        
-        // Membuka halaman Monitoring
-        new Monitoring().setVisible(true); 
-        this.dispose(); 
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Username atau Password Salah!");
-    }
-
-} catch (java.lang.Exception e) {
-    javax.swing.JOptionPane.showMessageDialog(this, "Terjadi Kesalahan: " + e.getMessage());
-}        // TODO add your handling code here:
+        doLogin();
     }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
@@ -135,7 +108,7 @@ try {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new Login().setVisible(true));
     }
@@ -149,4 +122,19 @@ try {
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+    
+    private void doLogin() {
+    String username = txtUsername.getText();
+    String password = new String(txtPassword.getPassword());
+
+    if (username.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Mohon isi Username Anda");
+        txtUsername.requestFocus();
+    } else if (password.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Mohon isi Password Anda");
+        txtPassword.requestFocus();
+    } else {
+        new com.mycompany.absenrfid.services.AuthService().login(username, password, this);
+    }
+  }
 }
