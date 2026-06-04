@@ -316,8 +316,8 @@ public class Monitoring extends javax.swing.JFrame {
         String prodi = cbFilterProdi.getSelectedItem().toString();
 
         // "Semua" berarti tidak ada filter
-        String kelasFilter = kelas.equalsIgnoreCase("Semua") ? "" : kelas;
-        String prodiFilter = prodi.equalsIgnoreCase("Semua") ? "" : prodi;
+        String kelasFilter = kelas.equalsIgnoreCase("Semua Kelas") ? "" : kelas;
+        String prodiFilter = prodi.equalsIgnoreCase("Semua Jurusan") ? "" : prodi;
 
         muatDataKartu(kelasFilter, prodiFilter);
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
