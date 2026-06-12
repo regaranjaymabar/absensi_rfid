@@ -14,7 +14,7 @@ import javax.swing.*;
 
 /**
  * Absensi - Laporan absensi dengan filter dan export CSV
- * @author NEXA
+ * @author user
  */
 public class Absensi extends javax.swing.JFrame {
 

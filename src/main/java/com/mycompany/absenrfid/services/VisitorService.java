@@ -5,6 +5,7 @@ import com.mycompany.absenrfid.objects.Visitor;
 import com.mongodb.client.model.Filters;
 import java.util.List;
 import org.bson.conversions.Bson;
+import com.mycompany.absenrfid.util.EncryptionUtils;
 
 /**
  * VisitorService - logika bisnis untuk data Visitor
@@ -15,11 +16,16 @@ public class VisitorService {
     private final GenericDAO<Visitor> dao = new GenericDAO<>("Visitors", Visitor.class);
 
     public void tambah(Visitor v) {
-        dao.save(v);
+    String encryptedUID = EncryptionUtils.encrypt(v.getUid_rfid());
+    v.setUid_rfid(encryptedUID);
+    dao.save(v);
     }
 
     public void update(String nim, Visitor v) {
-        dao.update(Filters.eq("nim", nim), v);
+    // Enkripsi UID baru sebelum disimpan
+    String encryptedUID = EncryptionUtils.encrypt(v.getUid_rfid());
+    v.setUid_rfid(encryptedUID);
+    dao.update(Filters.eq("nim", nim), v);
     }
 
     public void hapus(String nim) {
