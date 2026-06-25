@@ -3,6 +3,9 @@ package com.mycompany.absenrfid.view;
 import com.mycompany.absenrfid.util.MongoManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mycompany.absenrfid.serial.SerialDataHandler;
+import com.mycompany.absenrfid.services.DigitalClockService;
+import com.mycompany.absenrfid.services.SerialService;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -21,7 +24,8 @@ public class Monitoring extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger =
         java.util.logging.Logger.getLogger(Monitoring.class.getName());
-    private javax.swing.Timer clockTimer;
+    private Thread clockThread;
+    private SerialDataHandler<String> rfidHandler;
 
     /**
      * Creates new form Monitoring
@@ -31,6 +35,7 @@ public class Monitoring extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         loadLogo();
         startClock();
+        startSerialListener();
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataKartu("", "");
     }
@@ -46,12 +51,23 @@ public class Monitoring extends javax.swing.JFrame {
     }
 
     private void startClock() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        lblClock.setText(sdf.format(new Date()));
-        clockTimer = new javax.swing.Timer(1000,
-            e -> lblClock.setText(sdf.format(new Date())));
-        clockTimer.start();
-    }
+        DigitalClockService clockService = new DigitalClockService(lblClock, "EEEE, d MMMM yyyy, HH:mm:ss");
+    clockThread = clockService.getThread();
+    clockThread.setName("Clock-Thread");
+    clockThread.setDaemon(true); // mati otomatis saat aplikasi ditutup
+    clockThread.start();
+}
+    
+    private void startSerialListener() {
+    rfidHandler = (String rawUid) -> {
+        // Data RFID diterima dari hardware
+        // SwingUtilities.invokeLater wajib untuk update UI dari thread latar
+        SwingUtilities.invokeLater(() -> muatDataKartu("", ""));
+    };
+    SerialService.getInstance().addHandler(rfidHandler);
+}
+
+
 
     /**
      * Ambil data dari MongoDB dengan filter kelas dan/atau prodi.
@@ -140,16 +156,23 @@ public class Monitoring extends javax.swing.JFrame {
 
     /** Hentikan timer sebelum pindah form agar tidak memory leak / konflik */
     private void navigateTo(javax.swing.JFrame target) {
-        if (clockTimer != null) clockTimer.stop();
-        target.setVisible(true);
-        this.dispose();
+    // Hentikan clock thread
+    if (clockThread != null) clockThread.interrupt();
+    // Bersihkan handler RFID agar tidak memory leak
+    if (rfidHandler != null) {
+        SerialService.getInstance().removeHandler(rfidHandler);
     }
+    target.setVisible(true);
+    this.dispose();
+}
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         pnlSidebar = new javax.swing.JPanel();
+        
         lblLogo = new javax.swing.JLabel();
         btnNavMonitoring = new javax.swing.JButton();
         btnNavVisitor = new javax.swing.JButton();
@@ -246,18 +269,18 @@ public class Monitoring extends javax.swing.JFrame {
         pnlContent.setBackground(new java.awt.Color(255, 255, 255));
         pnlContent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblClock.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        lblClock.setFont(new java.awt.Font("Arial", 1, 22)); // NOI18N
         lblClock.setText("23 Jan 2026 10:08");
-        pnlContent.add(lblClock, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 320, 60));
+        pnlContent.add(lblClock, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 600, 60));
 
         lblVisitorCount.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
-        lblVisitorCount.setText("0");
+        lblVisitorCount.setText("4");
         pnlVisitorCard.add(lblVisitorCount);
 
         pnlContent.add(pnlVisitorCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 200, 60));
 
         cbFilterKelas.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "4 A", "4 B", "4 C", "4 D" }));
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4 C", "4 A", "4 B", "4 D" }));
         cbFilterKelas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterKelasActionPerformed(evt);
@@ -266,7 +289,7 @@ public class Monitoring extends javax.swing.JFrame {
         pnlContent.add(cbFilterKelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, 80, -1));
 
         cbFilterProdi.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
         cbFilterProdi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterProdiActionPerformed(evt);

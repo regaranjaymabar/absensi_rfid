@@ -39,6 +39,10 @@ public class VisitorService {
     public Visitor cariByNim(String nim) {
         return dao.findOne(Filters.eq("nim", nim));
     }
+    
+    public Visitor cariByUidEncrypted(String encryptedUid) {
+    return dao.findOne(Filters.eq("uid_rfid", encryptedUid));
+    }
 
     public List<Visitor> cari(String keyword) {
         Bson filter = Filters.or(

@@ -13,7 +13,7 @@ import java.util.List;
 import javax.swing.*;
 
 /**
- * Absensi - Laporan absensi dengan filter dan export CSV
+ * 
  * @author user
  */
 public class Absensi extends javax.swing.JFrame {
@@ -280,7 +280,7 @@ public class Absensi extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
 
     private void btnTampilkanAbsenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanAbsenActionPerformed
-        muatDataAbsensi(""); // tampilkan semua data
+        new MenuAbsen().setVisible(true);
     }//GEN-LAST:event_btnTampilkanAbsenActionPerformed
 
     private void btnNavAbsensiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavAbsensiActionPerformed
