@@ -1,6 +1,6 @@
 package com.mycompany.absenrfid.view;
 
-import com.mycompany.absenrfid.dao.GenericDAO;
+import com.mycompany.absenrfid.services.VisitorService;
 import com.mycompany.absenrfid.objects.Visitor;
 
 /**
@@ -10,7 +10,7 @@ import com.mycompany.absenrfid.objects.Visitor;
 public class TambahVisitor extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TambahVisitor.class.getName());
-    private final GenericDAO<Visitor> visitorDAO = new GenericDAO<>("Visitors", Visitor.class);
+    private final VisitorService visitorService = new VisitorService();
 
     public TambahVisitor(java.awt.Frame parent, boolean modal) {
         initComponents();
@@ -42,7 +42,7 @@ public class TambahVisitor extends javax.swing.JDialog {
             v.setUid_rfid(uid);
             
             // 4. Simpan langsung menggunakan visitorDAO (versi awal Anda)
-            visitorDAO.save(v);
+            visitorService.tambah(v);
             
             // 5. Notifikasi sukses dan tutup form
             javax.swing.JOptionPane.showMessageDialog(this, 

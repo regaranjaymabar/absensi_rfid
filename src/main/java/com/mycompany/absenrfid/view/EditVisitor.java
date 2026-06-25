@@ -2,6 +2,7 @@ package com.mycompany.absenrfid.view;
 
 import com.mycompany.absenrfid.objects.Visitor;
 import com.mycompany.absenrfid.services.VisitorService;
+import com.mycompany.absenrfid.util.EncryptionUtils;
 
 public class EditVisitor extends javax.swing.JDialog {
 
@@ -24,7 +25,11 @@ public class EditVisitor extends javax.swing.JDialog {
             TextFieldNama.setText(v.getNama());
             TextFieldJurusan.setText(v.getJurusan());
             TextFieldKelas.setText(v.getKelas());
-            TextFieldUID.setText(v.getUid_rfid());
+            String uid = v.getUid_rfid();
+            if (uid != null && !uid.isEmpty()) {
+            String decrypted = EncryptionUtils.decrypt(uid);
+            TextFieldUID.setText(decrypted != null ? decrypted : uid);
+            }
         }
     }
 
