@@ -5,7 +5,7 @@ import org.bson.Document;
 
 /**
  *
- * @author Nur Laela Suci Safitri
+ * @author FAIZAL ISMAN
  */
 public class TesKoneksi {
     public static void main(String[] args) {

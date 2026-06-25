@@ -15,7 +15,7 @@ import javax.crypto.NoSuchPaddingException;
 
 /**
  *
- * @author suci
+ * @author FAIZAL ISMAN
  */
 public class EncryptionUtils {
     

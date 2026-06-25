@@ -10,10 +10,10 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
- * @author Nur Laela Suci Safitri
+ * @author FAIZAL ISMAN
  */
 public class MongoManager {
-    private static MongoClient mongoClient;
+     private static MongoClient mongoClient;
     private static final String DATABASE_NAME = "absensi"; 
 
     public static MongoDatabase getDatabase() {

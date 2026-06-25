@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author
+ * @author FAIZAL ISMAN
  */
 public class GenericDAO<T> implements BaseDAO<T> {
     private final MongoCollection<T> collection;
