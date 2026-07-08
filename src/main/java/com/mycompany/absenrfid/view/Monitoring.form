@@ -53,9 +53,6 @@
               <Dimension value="[180, 90]"/>
             </Property>
           </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="public Monitoring() {&#xa;    initComponents();&#xa;    setLocationRelativeTo(null);&#xa;    &#xa;    try {&#xa;        // 1. Ambil gambar asli dari resources&#xa;        // Sesuaikan nama file: /resources/Picture1.png&#xa;        javax.swing.ImageIcon iconAsli = new javax.swing.ImageIcon(getClass().getResource(&quot;/resources/Picture1.png&quot;));&#xa;        &#xa;        // 2. Proses Scaling (Mengecilkan)&#xa;        // lblLogo adalah nama variabel JLabel Anda&#xa;        java.awt.Image img = iconAsli.getImage();&#xa;        java.awt.Image imgBaru = img.getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(), java.awt.Image.SCALE_SMOOTH);&#xa;        &#xa;        // 3. Masukkan kembali ke Label&#xa;        lblLogo.setIcon(new javax.swing.ImageIcon(imgBaru));&#xa;        &#xa;    } catch (Exception e) {&#xa;        System.out.println(&quot;Gagal memuat logo: &quot; + e.getMessage());&#xa;    }&#xa;}"/>
-          </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="50" y="0" width="130" height="100"/>

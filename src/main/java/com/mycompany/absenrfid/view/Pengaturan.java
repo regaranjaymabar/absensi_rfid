@@ -31,7 +31,6 @@ public class Pengaturan extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlSidebar = new javax.swing.JPanel();
-        
         lblLogo = new javax.swing.JLabel();
         btnNavPengaturan = new javax.swing.JButton();
         btnNavMonitoring = new javax.swing.JButton();
@@ -46,9 +45,6 @@ public class Pengaturan extends javax.swing.JFrame {
         pnlwadah2 = new javax.swing.JPanel();
         ComboBoxBahasa = new javax.swing.JComboBox<>();
         lblbahasa = new javax.swing.JLabel();
-        pnlwadah1 = new javax.swing.JPanel();
-        ComboBoxjenisAbsen = new javax.swing.JComboBox<>();
-        lbljenisAbsen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -133,23 +129,7 @@ public class Pengaturan extends javax.swing.JFrame {
         lblbahasa.setText("Ubah Bahasa Sistem");
         pnlwadah2.add(lblbahasa, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
-        pnlContent.add(pnlwadah2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 1020, 110));
-
-        pnlwadah1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        ComboBoxjenisAbsen.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        ComboBoxjenisAbsen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Masuk", "Keluar" }));
-        ComboBoxjenisAbsen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ComboBoxjenisAbsenActionPerformed(evt);
-            }
-        });
-        pnlwadah1.add(ComboBoxjenisAbsen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 980, 30));
-
-        lbljenisAbsen.setText("Ubah Jenis Absensi");
-        pnlwadah1.add(lbljenisAbsen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
-
-        pnlContent.add(pnlwadah1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 1020, 110));
+        pnlContent.add(pnlwadah2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 1020, 110));
 
         getContentPane().add(pnlContent, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 1060, 620));
 
@@ -183,10 +163,6 @@ public class Pengaturan extends javax.swing.JFrame {
         new Absensi().setVisible(true); this.dispose();// TODO add your handling code here:
     }//GEN-LAST:event_btnNavAbsensiActionPerformed
 
-    private void ComboBoxjenisAbsenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxjenisAbsenActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ComboBoxjenisAbsenActionPerformed
-
 
     public static void main(String args[]) {
         try {
@@ -199,7 +175,6 @@ public class Pengaturan extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> ComboBoxBahasa;
-    private javax.swing.JComboBox<String> ComboBoxjenisAbsen;
     private javax.swing.JButton btnNavAbsensi;
     private javax.swing.JButton btnNavMonitoring;
     private javax.swing.JButton btnNavPengaturan;
@@ -210,11 +185,9 @@ public class Pengaturan extends javax.swing.JFrame {
     private javax.swing.JLabel lblSubtitle;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblbahasa;
-    private javax.swing.JLabel lbljenisAbsen;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlSidebar;
-    private javax.swing.JPanel pnlwadah1;
     private javax.swing.JPanel pnlwadah2;
     // End of variables declaration//GEN-END:variables
 }

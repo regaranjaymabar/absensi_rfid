@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -192,7 +193,6 @@ public class DataVisitor extends javax.swing.JFrame {
         pnlContent = new javax.swing.JPanel();
         pnlVisitorCard = new javax.swing.JPanel();
         lblVisitorCount = new javax.swing.JLabel();
-        btnSimpanFilter = new javax.swing.JButton();
         lblVisitorLabel = new javax.swing.JLabel();
         JScrollPane = new javax.swing.JScrollPane();
         pnlCardContainer = new javax.swing.JPanel();
@@ -200,9 +200,10 @@ public class DataVisitor extends javax.swing.JFrame {
         cbFilterKelas = new javax.swing.JComboBox<>();
         pnlPencarian = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnTambah = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
         pnlHeader = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
         lblSubtitle = new javax.swing.JLabel();
@@ -214,101 +215,147 @@ public class DataVisitor extends javax.swing.JFrame {
 
         pnlSidebar.setBackground(new java.awt.Color(102, 0, 0));
         pnlSidebar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Logo Profil.png"))); // NOI18N
+        lblLogo.setPreferredSize(new java.awt.Dimension(180, 90));
         pnlSidebar.add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 130, 100));
 
-        btnNavPengaturan.setFont(new java.awt.Font("Segoe UI", 1, 12));
+        btnNavPengaturan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnNavPengaturan.setText("Pengaturan");
-        btnNavPengaturan.addActionListener(evt -> btnNavPengaturanActionPerformed(evt));
+        btnNavPengaturan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNavPengaturanActionPerformed(evt);
+            }
+        });
         pnlSidebar.add(btnNavPengaturan, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 160, 30));
 
-        btnNavMonitoring.setFont(new java.awt.Font("Segoe UI", 1, 12));
+        btnNavMonitoring.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnNavMonitoring.setText("Monitoring");
-        btnNavMonitoring.addActionListener(evt -> btnNavMonitoringActionPerformed(evt));
+        btnNavMonitoring.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNavMonitoringActionPerformed(evt);
+            }
+        });
         pnlSidebar.add(btnNavMonitoring, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 160, 30));
 
-        btnNavVisitor.setFont(new java.awt.Font("Segoe UI", 1, 12));
+        btnNavVisitor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnNavVisitor.setText("Data Visitor");
-        btnNavVisitor.setFocusPainted(false);
-        btnNavVisitor.setBorderPainted(false);
-        btnNavVisitor.addActionListener(evt -> btnNavVisitorActionPerformed(evt));
+        btnNavVisitor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNavVisitorActionPerformed(evt);
+            }
+        });
         pnlSidebar.add(btnNavVisitor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 160, 30));
 
-        btnNavAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 12));
+        btnNavAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnNavAbsensi.setText("Absensi");
-        btnNavAbsensi.addActionListener(evt -> btnNavAbsensiActionPerformed(evt));
+        btnNavAbsensi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNavAbsensiActionPerformed(evt);
+            }
+        });
         pnlSidebar.add(btnNavAbsensi, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, 160, 30));
 
         getContentPane().add(pnlSidebar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 720));
 
-        pnlContent.setBackground(java.awt.Color.WHITE);
+        pnlContent.setBackground(new java.awt.Color(255, 255, 255));
         pnlContent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblVisitorCount.setFont(new java.awt.Font("Arial", 1, 48));
-        lblVisitorCount.setText("0");
+        lblVisitorCount.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
+        lblVisitorCount.setText("4");
         pnlVisitorCard.add(lblVisitorCount);
-        pnlContent.add(pnlVisitorCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 200, 60));
 
-        btnSimpanFilter.setBackground(new java.awt.Color(51, 204, 0));
-        btnSimpanFilter.setText("Simpan");
-        btnSimpanFilter.addActionListener(evt -> btnSimpanFilterActionPerformed(evt));
-        pnlContent.add(btnSimpanFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, -1, -1));
+        pnlContent.add(pnlVisitorCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 200, 60));
 
         lblVisitorLabel.setText("Jumlah Visitor");
         pnlContent.add(lblVisitorLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, 10));
 
         JScrollPane.setBackground(new java.awt.Color(153, 153, 153));
         JScrollPane.setViewportView(pnlCardContainer);
+
         pnlContent.add(JScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 1020, 420));
 
         cbFilterProdi.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Semua Prodi","Teknik Informatika","Teknik Elektro","Teknik Komputer","Teknik Mesin"}));
-        cbFilterProdi.addActionListener(evt -> cbFilterProdiActionPerformed(evt));
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
+        cbFilterProdi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbFilterProdiActionPerformed(evt);
+            }
+        });
         pnlContent.add(cbFilterProdi, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 140, -1));
 
         cbFilterKelas.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Semua Kelas","4 C","4 A","4 B","4 D"}));
-        cbFilterKelas.addActionListener(evt -> cbFilterKelasActionPerformed(evt));
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4 C", "4 A", "4 B", "4 D" }));
+        cbFilterKelas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbFilterKelasActionPerformed(evt);
+            }
+        });
         pnlContent.add(cbFilterKelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 40, 80, -1));
 
         pnlPencarian.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search.png")));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search.png"))); // NOI18N
         pnlPencarian.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 20, 30));
+
         pnlContent.add(pnlPencarian, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 200, 30));
 
-        btnTambah.setBackground(new java.awt.Color(51, 204, 0));
-        btnTambah.setText("Tambah");
-        btnTambah.addActionListener(evt -> btnTambahActionPerformed(evt));
-        pnlContent.add(btnTambah, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, 100, 30));
-
-        btnUpdate.setBackground(new java.awt.Color(255, 153, 0));
         btnUpdate.setText("Update");
-        btnUpdate.addActionListener(evt -> btnUpdateActionPerformed(evt));
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
         pnlContent.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, 90, 30));
 
-        btnRefresh.setBackground(new java.awt.Color(0, 153, 255));
-        btnRefresh.setForeground(java.awt.Color.WHITE);
         btnRefresh.setText("Refresh");
-        btnRefresh.addActionListener(evt -> btnRefreshActionPerformed(evt));
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         pnlContent.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 130, 100, 30));
+
+        btnTambah.setText("Tambah");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
+        pnlContent.add(btnTambah, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 130, 90, 30));
+
+        btnSimpan.setBackground(new java.awt.Color(51, 204, 0));
+        btnSimpan.setText("Simpan");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
+        pnlContent.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, -1, -1));
 
         getContentPane().add(pnlContent, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 1060, 620));
 
         pnlHeader.setBackground(new java.awt.Color(153, 0, 0));
         pnlHeader.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        lblTitle.setFont(new java.awt.Font("Arial", 1, 24));
-        lblTitle.setForeground(java.awt.Color.WHITE);
+
+        lblTitle.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setText("Data Visitor");
         pnlHeader.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
-        lblSubtitle.setFont(new java.awt.Font("Arial", 0, 12));
-        lblSubtitle.setForeground(java.awt.Color.WHITE);
+
+        lblSubtitle.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        lblSubtitle.setForeground(new java.awt.Color(255, 255, 255));
         lblSubtitle.setText("Menejemen Data Visitor CRUD");
         pnlHeader.add(lblSubtitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
-        lblAdminName.setFont(new java.awt.Font("Arial", 1, 12));
-        lblAdminName.setForeground(java.awt.Color.WHITE);
+
+        lblAdminName.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblAdminName.setForeground(new java.awt.Color(255, 255, 255));
         lblAdminName.setText("Admin");
         pnlHeader.add(lblAdminName, new org.netbeans.lib.awtextra.AbsoluteConstraints(952, 40, -1, 20));
-        lblAdminProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profil.png")));
+
+        lblAdminProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profil.png"))); // NOI18N
         pnlHeader.add(lblAdminProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 30, 40, 40));
+
         getContentPane().add(pnlHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 1060, 100));
 
         pack();
@@ -349,8 +396,7 @@ public class DataVisitor extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnSimpanFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanFilterActionPerformed
-        String k = (String) cbFilterKelas.getSelectedItem();
-        muatDataKartu((k == null || k.startsWith("Semua")) ? "" : k.trim());
+        
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
 
     private void cbFilterKelasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterKelasActionPerformed
@@ -358,6 +404,11 @@ public class DataVisitor extends javax.swing.JFrame {
 
     private void cbFilterProdiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterProdiActionPerformed
     }//GEN-LAST:event_cbFilterProdiActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+       String k = (String) cbFilterKelas.getSelectedItem();
+        muatDataKartu((k == null || k.startsWith("Semua")) ? "" : k.trim()); // TODO add your handling code here:
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -375,7 +426,7 @@ public class DataVisitor extends javax.swing.JFrame {
     private javax.swing.JButton btnNavPengaturan;
     private javax.swing.JButton btnNavVisitor;
     private javax.swing.JButton btnRefresh;
-    private javax.swing.JButton btnSimpanFilter;
+    private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbFilterKelas;

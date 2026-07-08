@@ -176,7 +176,6 @@ public class Monitoring extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlSidebar = new javax.swing.JPanel();
-        
         lblLogo = new javax.swing.JLabel();
         btnNavMonitoring = new javax.swing.JButton();
         btnNavVisitor = new javax.swing.JButton();
