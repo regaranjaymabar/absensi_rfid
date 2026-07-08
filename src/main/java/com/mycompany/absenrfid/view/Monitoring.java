@@ -120,7 +120,7 @@ public class Monitoring extends javax.swing.JFrame {
             lbl.setForeground(Color.GRAY);
             pnlCardContainer.add(lbl, BorderLayout.CENTER);
         } else {
-            pnlCardContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 8));
+            pnlCardContainer.setLayout(new java.awt.GridLayout(0, 3, 8, 8));
             for (Document doc : listData) {
                 pnlCardContainer.add(buatKartu(doc));
             }
