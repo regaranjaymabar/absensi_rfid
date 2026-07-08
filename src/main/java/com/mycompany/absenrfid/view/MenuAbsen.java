@@ -277,7 +277,6 @@ public class MenuAbsen extends javax.swing.JFrame
                 pnlResult.setVisible(true);
                 lblStatus.setVisible(false);
             } else {
-                logService.simpanLog(hashedUid, "Unknown", "-", "-", "Gagal");
                 lblNama.setText(I18nService.get("ui.status.failed"));
                 lblKeterangan.setText("Scan Ulang / Daftar Dulu");
                 pnlResult.setBackground(new java.awt.Color(204, 0, 0));
