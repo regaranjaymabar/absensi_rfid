@@ -5,26 +5,25 @@ import com.mycompany.absenrfid.objects.Visitor;
 import com.mongodb.client.model.Filters;
 import java.util.List;
 import org.bson.conversions.Bson;
-import com.mycompany.absenrfid.util.EncryptionUtils;
 
 /**
- * VisitorService - logika bisnis untuk data Visitor
- * Mengikuti pola KaryawanService milik dosen
- * @author NEXA
+ * 
+ * @author User
  */
 public class VisitorService {
     private final GenericDAO<Visitor> dao = new GenericDAO<>("Visitors", Visitor.class);
 
     public void tambah(Visitor v) {
-    String encryptedUID = EncryptionUtils.encrypt(v.getUid_rfid());
-    v.setUid_rfid(encryptedUID);
+    String hashedUID = com.mycompany.absenrfid.util.SecurityUtils
+        .getHash(v.getUid_rfid(), com.mycompany.absenrfid.util.SecurityUtils.SHA_256);
+    v.setUid_rfid(hashedUID);
     dao.save(v);
     }
 
     public void update(String nim, Visitor v) {
-    // Enkripsi UID baru sebelum disimpan
-    String encryptedUID = EncryptionUtils.encrypt(v.getUid_rfid());
-    v.setUid_rfid(encryptedUID);
+    String hashedUID = com.mycompany.absenrfid.util.SecurityUtils
+        .getHash(v.getUid_rfid(), com.mycompany.absenrfid.util.SecurityUtils.SHA_256);
+    v.setUid_rfid(hashedUID);
     dao.update(Filters.eq("nim", nim), v);
     }
 
@@ -42,6 +41,11 @@ public class VisitorService {
     
     public Visitor cariByUidEncrypted(String encryptedUid) {
     return dao.findOne(Filters.eq("uid_rfid", encryptedUid));
+    }
+    
+    /** Cari visitor berdasarkan UID yang sudah di-hash SHA-256 */
+    public Visitor cariByUidHash(String hashedUid) {
+        return dao.findOne(Filters.eq("uid_rfid", hashedUid));
     }
 
     public List<Visitor> cari(String keyword) {

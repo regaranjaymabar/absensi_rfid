@@ -111,10 +111,15 @@ public class SerialService {
     /**
      * Mengirimkan data ke semua handler yang terdaftar.
      */
-    private void broadcast(String data) {
+    public void broadcast(String data) {
         for (SerialDataHandler<String> handler : handlers) {
             handler.onDataReceived(data);
         }
+    }
+    
+    /** Untuk simulasi tap kartu tanpa hardware fisik */
+    public void simulateBroadcast(String dummyData) {
+        broadcast(dummyData);
     }
 
     public void disconnect() {

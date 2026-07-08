@@ -9,18 +9,23 @@ import com.mycompany.absenrfid.serial.SerialDataHandler;
 import com.mycompany.absenrfid.services.SerialService;
 import com.mycompany.absenrfid.services.VisitorService;
 import com.mycompany.absenrfid.services.LogAbsensiService;
-import com.mycompany.absenrfid.util.EncryptionUtils;
-import java.awt.Color;
+import com.mycompany.absenrfid.util.SecurityUtils;
 import javax.swing.SwingUtilities;
+import com.mycompany.absenrfid.services.I18nService;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 /**
  *
  * @author user
  */
-public class MenuAbsen extends javax.swing.JFrame {
+public class MenuAbsen extends javax.swing.JFrame 
+    implements I18nService.I18nChangeListener{
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuAbsen.class.getName());
     
     private SerialDataHandler<String> rfidHandler;
+    Thread delayThread;
     private final VisitorService visitorService = new VisitorService();
     private final LogAbsensiService logService = new LogAbsensiService();
 
@@ -28,21 +33,27 @@ public class MenuAbsen extends javax.swing.JFrame {
      * Creates new form MenuAbsen
      */
     public MenuAbsen() {
-        initComponents();
-        setLocationRelativeTo(null);
-        loadLogo();
-        pnlResult.setVisible(false);
-        startRfidListener();
-        
-        // Bersihkan handler saat form ditutup
-        addWindowListener(new java.awt.event.WindowAdapter() {
+    initComponents();
+    setLocationRelativeTo(null);
+    loadLogo();
+    pnlResult.setVisible(false);
+    I18nService.registerListener(this);
+    onLanguageChanged(); // terapkan bahasa saat ini
+    registerHandler();
+    addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosing(java.awt.event.WindowEvent e) {
+            I18nService.unregisterListener(MenuAbsen.this);
             if (rfidHandler != null) {
                 SerialService.getInstance().removeHandler(rfidHandler);
             }
         }
     });
+}
+    
+    @Override
+    public void onLanguageChanged() {
+        lblStatus.setText(I18nService.get("ui.welcome"));
     }
     
     private void loadLogo() {
@@ -58,64 +69,27 @@ public class MenuAbsen extends javax.swing.JFrame {
     }
 }
     
-    private void startRfidListener() {
-    rfidHandler = (String rawUid) -> {
-        SwingUtilities.invokeLater(() -> prosesUid(rawUid));
-    };
-    SerialService.getInstance().addHandler(rfidHandler);
-}
-    
-    private void prosesUid(String rawUid) {
-    String encryptedUid = EncryptionUtils.encrypt(rawUid);
-    Visitor visitor = visitorService.cariByUidEncrypted(encryptedUid);
 
-    if (visitor != null) {
-        tampilHasil(visitor.getNama(), "Success", new Color(0, 153, 0));
-        simpanLog(visitor, rawUid, "Berhasil");
-    } else {
-        tampilHasil("Kartu Tidak Terdaftar", "Scan Ulang / Daftar Dulu", new Color(204, 0, 0));
-        simpanLogGagal(rawUid);
-    }
-
-    new Thread(() -> {
-        try {
-            Thread.sleep(3000);
-            SwingUtilities.invokeLater(this::kembaliIdle);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    private void updateLabelWithDelay() {
+        if (delayThread != null && delayThread.isAlive()) {
+            delayThread.interrupt();
         }
-    }).start();
-}
-    
-    private void tampilHasil(String nama, String keterangan, Color warna) {
-    lblNama.setText(nama);
-    lblKeterangan.setText(keterangan);
-    pnlResult.setBackground(warna);
-    pnlResult.setVisible(true);
-    lblStatus.setVisible(false);
-    }
-
-    private void kembaliIdle() {
-        pnlResult.setVisible(false);
-        lblStatus.setVisible(true);
-    }
-
-    private void simpanLog(Visitor v, String rawUid, String status) {
-    logService.simpanLog(
-        EncryptionUtils.encrypt(rawUid),
-        v.getNama(),
-        v.getNim(),
-        v.getKelas(),
-        status
-        );
-    }
-
-    private void simpanLogGagal(String rawUid) {
-    logService.simpanLog(
-        EncryptionUtils.encrypt(rawUid),
-        "Unknown", "-", "-",
-        "Gagal - UID tidak terdaftar"
-        );
+        delayThread = new Thread(() -> {
+            try {
+                for (int i = 3; i >= 1; i--) {
+                    Thread.sleep(1000);
+                }
+                SwingUtilities.invokeLater(() -> {
+                    pnlResult.setVisible(false);
+                    lblStatus.setVisible(true);
+                });
+            } catch (InterruptedException e) {
+                // thread dihentikan paksa saat kartu baru di-tap sebelum 3 detik
+            }
+        });
+        delayThread.setName("delayThread");
+        delayThread.setDaemon(true);
+        delayThread.start();
     }
 
     /**
@@ -132,11 +106,13 @@ public class MenuAbsen extends javax.swing.JFrame {
         pnlResult = new javax.swing.JPanel();
         lblNama = new javax.swing.JLabel();
         lblKeterangan = new javax.swing.JLabel();
+        txtUID = new javax.swing.JTextField();
+        btnSimulasi = new javax.swing.JButton();
+        lblTanggalJam = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(800, 600));
         setSize(new java.awt.Dimension(800, 600));
 
         lblLogo.setPreferredSize(new java.awt.Dimension(400, 150));
@@ -165,6 +141,27 @@ public class MenuAbsen extends javax.swing.JFrame {
         lblKeterangan.setText("Success");
         pnlResult.add(lblKeterangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 120, 500, 25));
 
+        txtUID.setText("Masukkan UID Kartu");
+        txtUID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUIDActionPerformed(evt);
+            }
+        });
+
+        btnSimulasi.setBackground(new java.awt.Color(102, 0, 0));
+        btnSimulasi.setForeground(new java.awt.Color(255, 255, 255));
+        btnSimulasi.setText("Absen");
+        btnSimulasi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimulasiActionPerformed(evt);
+            }
+        });
+
+        lblTanggalJam.setBackground(new java.awt.Color(102, 0, 0));
+        lblTanggalJam.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        lblTanggalJam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTanggalJam.setText("Waktu");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,24 +169,39 @@ public class MenuAbsen extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(196, 196, 196)
-                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 203, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(pnlResult, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)))
+                        .addComponent(pnlResult, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(240, 240, 240)
+                                .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(278, 278, 278)
+                                .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSimulasi))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(232, 232, 232)
+                                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(281, 281, 281)
+                                .addComponent(lblTanggalJam, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 276, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(240, 240, 240)
-                .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(115, 115, 115)
+                .addContainerGap()
+                .addComponent(lblTanggalJam)
+                .addGap(83, 83, 83)
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSimulasi))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
                 .addComponent(pnlResult, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE))
@@ -197,6 +209,22 @@ public class MenuAbsen extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtUIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUIDActionPerformed
+
+    private void btnSimulasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulasiActionPerformed
+        String uid = txtUID.getText().trim();
+        if (uid.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Masukkan UID terlebih dahulu!");
+            return;
+        }
+        // Simulasi tap kartu — broadcast ke SerialService
+        SerialService.getInstance().simulateBroadcast(uid);
+        txtUID.setText("");
+   
+    }//GEN-LAST:event_btnSimulasiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,10 +252,59 @@ public class MenuAbsen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSimulasi;
     private javax.swing.JLabel lblKeterangan;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblNama;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTanggalJam;
     private javax.swing.JPanel pnlResult;
+    private javax.swing.JTextField txtUID;
     // End of variables declaration//GEN-END:variables
+
+    private void registerHandler() {
+        startClock();
+    rfidHandler = dataRfid -> {
+        String hashedUid = SecurityUtils.getHash(dataRfid, SecurityUtils.SHA_256);
+        Visitor visitor = visitorService.cariByUidHash(hashedUid);
+
+        SwingUtilities.invokeLater(() -> {
+            if (visitor != null) {
+                logService.simpanLog(hashedUid, visitor.getNama(), visitor.getNim(), visitor.getKelas(), "Berhasil");
+                lblNama.setText(visitor.getNama());
+                lblKeterangan.setText(I18nService.get("ui.status.success"));
+                pnlResult.setBackground(new java.awt.Color(0, 153, 0));
+                pnlResult.setVisible(true);
+                lblStatus.setVisible(false);
+            } else {
+                logService.simpanLog(hashedUid, "Unknown", "-", "-", "Gagal");
+                lblNama.setText(I18nService.get("ui.status.failed"));
+                lblKeterangan.setText("Scan Ulang / Daftar Dulu");
+                pnlResult.setBackground(new java.awt.Color(204, 0, 0));
+                pnlResult.setVisible(true);
+                lblStatus.setVisible(false);
+            }
+            updateLabelWithDelay();
+        });
+    };
+    SerialService.getInstance().addHandler(rfidHandler);
+}
+    
+    private void startClock() {
+    Thread t = new Thread(() -> {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy  HH:mm:ss", new java.util.Locale("id", "ID"));
+        while (!Thread.currentThread().isInterrupted()) {
+            String waktu = LocalDateTime.now().format(formatter);
+            SwingUtilities.invokeLater(() -> lblTanggalJam.setText(waktu));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    });
+    t.setName("Clock-MenuAbsen");
+    t.setDaemon(true);
+    t.start();
+}
 }

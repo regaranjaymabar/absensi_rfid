@@ -87,7 +87,7 @@ public class Absensi extends javax.swing.JFrame {
         pnlCardContainer.repaint();
     }
 
-    // ── Buat satu kartu merah ─────────────────────────────────────
+    // ── Buat satu kartu merah 
     private JPanel buatKartu(Document doc) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
