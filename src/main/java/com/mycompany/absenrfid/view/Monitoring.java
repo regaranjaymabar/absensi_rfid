@@ -32,6 +32,9 @@ public class Monitoring extends javax.swing.JFrame {
      */
     public Monitoring() {
         initComponents();
+        // Ganti bagian ini di initComponents
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "4 A", "4 B", "4 C", "4 D" }));
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
         setLocationRelativeTo(null);
         loadLogo();
         startClock();
@@ -58,24 +61,17 @@ public class Monitoring extends javax.swing.JFrame {
         DigitalClockService clockService = new DigitalClockService(lblClock, "EEEE, d MMMM yyyy, HH:mm:ss");
     clockThread = clockService.getThread();
     clockThread.setName("Clock-Thread");
-    clockThread.setDaemon(true); // mati otomatis saat aplikasi ditutup
+    clockThread.setDaemon(true);
     clockThread.start();
 }
     
     private void startSerialListener() {
     rfidHandler = (String rawUid) -> {
-        // Data RFID diterima dari hardware
-        // SwingUtilities.invokeLater wajib untuk update UI dari thread latar
         SwingUtilities.invokeLater(() -> muatDataKartu("", ""));
     };
     SerialService.getInstance().addHandler(rfidHandler);
 }
 
-
-
-    /**
-     * Ambil data dari MongoDB dengan filter kelas dan/atau prodi.
-     */
     private List<Document> ambilData(String kelasFilter, String prodiFilter) {
         MongoCollection<Document> col =
             MongoManager.getDatabase().getCollection("LogAbsensi");
@@ -87,7 +83,7 @@ public class Monitoring extends javax.swing.JFrame {
                 filters.add(Filters.regex("kelas", kelasFilter.trim(), "i"));
             }
             if (prodiFilter != null && !prodiFilter.trim().isEmpty()) {
-                filters.add(Filters.regex("prodi", prodiFilter.trim(), "i"));
+                filters.add(Filters.regex("jurusan", prodiFilter.trim(), "i"));
             }
 
             if (!filters.isEmpty()) {
@@ -283,7 +279,7 @@ public class Monitoring extends javax.swing.JFrame {
         pnlContent.add(pnlVisitorCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 200, 60));
 
         cbFilterKelas.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4 C", "4 A", "4 B", "4 D" }));
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "4 A", "4 B", "4 C", "4 D" }));
         cbFilterKelas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterKelasActionPerformed(evt);
@@ -292,7 +288,7 @@ public class Monitoring extends javax.swing.JFrame {
         pnlContent.add(cbFilterKelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, 80, -1));
 
         cbFilterProdi.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
         cbFilterProdi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterProdiActionPerformed(evt);
@@ -339,12 +335,9 @@ public class Monitoring extends javax.swing.JFrame {
 
     private void btnSimpanFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanFilterActionPerformed
         String kelas = cbFilterKelas.getSelectedItem().toString();
-        String prodi = cbFilterProdi.getSelectedItem().toString();
-
-        // "Semua" berarti tidak ada filter
-        String kelasFilter = kelas.equalsIgnoreCase("Semua Kelas") ? "" : kelas;
-        String prodiFilter = prodi.equalsIgnoreCase("Semua Jurusan") ? "" : prodi;
-
+        String jurusan = cbFilterProdi.getSelectedItem().toString();
+        String kelasFilter = kelas.equalsIgnoreCase("Semua") ? "" : kelas;
+        String prodiFilter = jurusan.equalsIgnoreCase("Semua") ? "" : jurusan;
         muatDataKartu(kelasFilter, prodiFilter);
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
 

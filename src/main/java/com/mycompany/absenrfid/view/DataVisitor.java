@@ -57,54 +57,71 @@ public class DataVisitor extends javax.swing.JFrame {
     }
 
     // ── Ambil data dari MongoDB ───────────────────────────────────
-    private List<Document> ambilData(String keyword) {
-        MongoCollection<Document> col =
-            MongoManager.getDatabase().getCollection("Visitors");
-        List<Document> hasil = new ArrayList<>();
-        try {
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                Bson f = Filters.or(
-                    Filters.regex("nama",  keyword, "i"),
-                    Filters.regex("nim",   keyword, "i"),
-                    Filters.regex("kelas", keyword, "i")
-                );
-                col.find(f).into(hasil);
-            } else {
-                col.find().into(hasil);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Gagal koneksi MongoDB:\n" + e.getMessage(), "Error",
-                JOptionPane.ERROR_MESSAGE);
+    private List<Document> ambilData(String keyword, String prodi, String kelas) {
+    MongoCollection<Document> col = MongoManager.getDatabase().getCollection("Visitors");
+    List<Document> hasil = new ArrayList<>();
+    try {
+        List<Bson> filters = new ArrayList<>();
+
+        // FILTER 1: Keyword (Nama/NIM/Kelas)
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            filters.add(Filters.or(
+                Filters.regex("nama", keyword, "i"),
+                Filters.regex("nim", keyword, "i")
+            ));
         }
-        return hasil;
-    }
 
-    // ── Tampilkan kartu merah ─────────────────────────────────────
-    private void muatDataKartu(String keyword) {
-        pnlCardContainer.removeAll();
-        pnlCardContainer.setBackground(new Color(230, 230, 230));
+        // FILTER 2: Prodi (Hanya jika bukan "Semua")
+        if (prodi != null && !prodi.equals("Semua") && !prodi.trim().isEmpty()) {
+            filters.add(Filters.regex("jurusan", prodi.trim(), "i"));
+        }
 
-        List<Document> listData = ambilData(keyword);
-        lblVisitorCount.setText(String.valueOf(listData.size()));
+        // FILTER 3: Kelas (Hanya jika bukan "Semua")
+        if (kelas != null && !kelas.equals("Semua") && !kelas.trim().isEmpty()) {
+            filters.add(Filters.regex("kelas", kelas.trim(), "i"));
+        }
 
-        if (listData.isEmpty()) {
-            pnlCardContainer.setLayout(new BorderLayout());
-            JLabel lbl = new JLabel("Tidak ada data.", SwingConstants.CENTER);
-            lbl.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-            lbl.setForeground(Color.GRAY);
-            pnlCardContainer.add(lbl, BorderLayout.CENTER);
+        // EKSEKUSI
+        if (filters.isEmpty()) {
+            col.find().into(hasil); // Tidak ada filter, ambil semua
         } else {
-            pnlCardContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 8));
-            for (Document doc : listData) {
-                pnlCardContainer.add(buatKartu(doc));
-            }
+            col.find(Filters.and(filters)).into(hasil);
         }
-        pnlCardContainer.revalidate();
-        pnlCardContainer.repaint();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
     }
+    return hasil;
+}
 
-    // ── Buat satu kartu merah dengan tombol Edit & Hapus ─────────
+   private void muatDataKartu(String keyword) {
+    pnlCardContainer.removeAll();
+    pnlCardContainer.setBackground(new Color(230, 230, 230));
+
+    // 1. Ambil nilai dari ComboBox di dalam method ini
+    String prodi = cbFilterProdi.getSelectedItem().toString();
+    String kelas = cbFilterKelas.getSelectedItem().toString();
+
+    // 2. Ambil data (Pass keyword dari parameter, prodi & kelas dari UI)
+    List<Document> listData = ambilData(keyword, prodi, kelas);
+    
+    lblVisitorCount.setText(String.valueOf(listData.size()));
+
+    if (listData.isEmpty()) {
+        pnlCardContainer.setLayout(new BorderLayout());
+        JLabel lbl = new JLabel("Tidak ada data.", SwingConstants.CENTER);
+        lbl.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        lbl.setForeground(Color.GRAY);
+        pnlCardContainer.add(lbl, BorderLayout.CENTER);
+    } else {
+        pnlCardContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        for (Document doc : listData) {
+            pnlCardContainer.add(buatKartu(doc));
+        }
+    }
+    pnlCardContainer.revalidate();
+    pnlCardContainer.repaint();
+}
+
     private JPanel buatKartu(Document doc) {
         String nim   = nvl(doc.getString("nim"));
         String nama  = nvl(doc.getString("nama"));
@@ -200,7 +217,6 @@ public class DataVisitor extends javax.swing.JFrame {
         cbFilterKelas = new javax.swing.JComboBox<>();
         pnlPencarian = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnUpdate = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
@@ -276,7 +292,7 @@ public class DataVisitor extends javax.swing.JFrame {
         pnlContent.add(JScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 1020, 420));
 
         cbFilterProdi.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
+        cbFilterProdi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
         cbFilterProdi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterProdiActionPerformed(evt);
@@ -285,7 +301,7 @@ public class DataVisitor extends javax.swing.JFrame {
         pnlContent.add(cbFilterProdi, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 140, -1));
 
         cbFilterKelas.setBackground(new java.awt.Color(204, 204, 204));
-        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4 C", "4 A", "4 B", "4 D" }));
+        cbFilterKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "4 A", "4 B", "4 C", "4 D", " " }));
         cbFilterKelas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbFilterKelasActionPerformed(evt);
@@ -300,21 +316,13 @@ public class DataVisitor extends javax.swing.JFrame {
 
         pnlContent.add(pnlPencarian, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 200, 30));
 
-        btnUpdate.setText("Update");
-        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpdateActionPerformed(evt);
-            }
-        });
-        pnlContent.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, 90, 30));
-
         btnRefresh.setText("Refresh");
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRefreshActionPerformed(evt);
             }
         });
-        pnlContent.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 130, 100, 30));
+        pnlContent.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 130, 100, 30));
 
         btnTambah.setText("Tambah");
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
@@ -384,15 +392,11 @@ public class DataVisitor extends javax.swing.JFrame {
         muatDataKartu(""); // refresh setelah tambah
     }//GEN-LAST:event_btnTambahActionPerformed
 
-    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        EditVisitor dialog = new EditVisitor((Frame) SwingUtilities.getWindowAncestor(this), true);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-        muatDataKartu(""); // refresh setelah update
-    }//GEN-LAST:event_btnUpdateActionPerformed
-
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        muatDataKartu(""); // reload semua data
+    cbFilterProdi.setSelectedItem("Semua");
+    cbFilterKelas.setSelectedItem("Semua");
+    txtCari.setText(""); 
+    muatDataKartu("");
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnSimpanFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanFilterActionPerformed
@@ -406,8 +410,7 @@ public class DataVisitor extends javax.swing.JFrame {
     }//GEN-LAST:event_cbFilterProdiActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-       String k = (String) cbFilterKelas.getSelectedItem();
-        muatDataKartu((k == null || k.startsWith("Semua")) ? "" : k.trim()); // TODO add your handling code here:
+       muatDataKartu(txtCari.getText().trim());
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     public static void main(String args[]) {
@@ -428,7 +431,6 @@ public class DataVisitor extends javax.swing.JFrame {
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
-    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbFilterKelas;
     private javax.swing.JComboBox<String> cbFilterProdi;
     private javax.swing.JLabel jLabel1;

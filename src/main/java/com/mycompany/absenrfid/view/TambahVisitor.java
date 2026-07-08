@@ -17,23 +17,29 @@ public class TambahVisitor extends javax.swing.JDialog {
     }
 
   private void simpanData() {
-        // 1. Ambil data dari text field ke dalam variabel
+
         String nim = TextFieldNim.getText().trim();
         String nama = TextFieldNama.getText().trim();
-        String jurusan = TextFieldJurusan.getText().trim();
-        String kelas = TextFieldKelas.getText().trim();
         String uid = TextFieldUID.getText().trim();
+        String jurusan = Jurusan.getSelectedItem().toString();
+        String kelas = Kelas.getSelectedItem().toString();
 
-        // 2. Validasi Input agar tidak kosong
-        if (nim.isEmpty() || nama.isEmpty()) {
+ 
+        if (nim.isEmpty() || nama.isEmpty() || uid.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "NIM dan Nama wajib diisi!", "Peringatan", 
+                "NIM, Nama, dan UID wajib diisi!", "Peringatan", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (jurusan.contains("Pilih Jurusan") || kelas.contains("Pilih Kelas")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Silakan pilih Jurusan dan Kelas terlebih dahulu!", "Peringatan", 
                 javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            // 3. Masukkan data ke objek Visitor
             Visitor v = new Visitor();
             v.setNim(nim);
             v.setNama(nama);
@@ -41,10 +47,7 @@ public class TambahVisitor extends javax.swing.JDialog {
             v.setKelas(kelas);
             v.setUid_rfid(uid);
             
-            // 4. Simpan langsung menggunakan visitorDAO (versi awal Anda)
-            visitorService.tambah(v);
-            
-            // 5. Notifikasi sukses dan tutup form
+            visitorService.tambah(v);  
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "Data berhasil disimpan!", "Informasi", 
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
@@ -58,9 +61,7 @@ public class TambahVisitor extends javax.swing.JDialog {
         }
     }
   
-    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {
-        dispose(); 
-    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -76,10 +77,10 @@ public class TambahVisitor extends javax.swing.JDialog {
         TextFieldUID = new javax.swing.JTextField();
         TextFieldNim = new javax.swing.JTextField();
         TextFieldNama = new javax.swing.JTextField();
-        TextFieldJurusan = new javax.swing.JTextField();
-        TextFieldKelas = new javax.swing.JTextField();
         btnBatal = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
+        Jurusan = new javax.swing.JComboBox<>();
+        Kelas = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -127,12 +128,6 @@ public class TambahVisitor extends javax.swing.JDialog {
         TextFieldNama.setBackground(new java.awt.Color(204, 204, 204));
         pnlWadah.add(TextFieldNama, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 120, 210, -1));
 
-        TextFieldJurusan.setBackground(new java.awt.Color(204, 204, 204));
-        pnlWadah.add(TextFieldJurusan, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 160, 210, -1));
-
-        TextFieldKelas.setBackground(new java.awt.Color(204, 204, 204));
-        pnlWadah.add(TextFieldKelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 210, -1));
-
         btnBatal.setBackground(new java.awt.Color(204, 0, 0));
         btnBatal.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBatal.setText("Batal");
@@ -153,6 +148,22 @@ public class TambahVisitor extends javax.swing.JDialog {
         });
         pnlWadah.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, -1, -1));
 
+        Jurusan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Jurusan", "Teknik Informatika", "Teknik Elektro", "Teknik Komputer", "Teknik Mesin" }));
+        Jurusan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JurusanActionPerformed(evt);
+            }
+        });
+        pnlWadah.add(Jurusan, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 160, 210, -1));
+
+        Kelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Kelas", "4 A", "4 B", "4 C", "4 D" }));
+        Kelas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KelasActionPerformed(evt);
+            }
+        });
+        pnlWadah.add(Kelas, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 210, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -170,6 +181,18 @@ public class TambahVisitor extends javax.swing.JDialog {
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
        simpanData();
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void KelasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KelasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_KelasActionPerformed
+
+    private void JurusanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JurusanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JurusanActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+    dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBatalActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -193,8 +216,8 @@ public class TambahVisitor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField TextFieldJurusan;
-    private javax.swing.JTextField TextFieldKelas;
+    private javax.swing.JComboBox<String> Jurusan;
+    private javax.swing.JComboBox<String> Kelas;
     private javax.swing.JTextField TextFieldNama;
     private javax.swing.JTextField TextFieldNim;
     private javax.swing.JTextField TextFieldUID;

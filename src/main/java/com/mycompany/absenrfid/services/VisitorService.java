@@ -21,9 +21,6 @@ public class VisitorService {
     }
 
     public void update(String nim, Visitor v) {
-    String hashedUID = com.mycompany.absenrfid.util.SecurityUtils
-        .getHash(v.getUid_rfid(), com.mycompany.absenrfid.util.SecurityUtils.SHA_256);
-    v.setUid_rfid(hashedUID);
     dao.update(Filters.eq("nim", nim), v);
     }
 
