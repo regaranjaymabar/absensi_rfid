@@ -36,6 +36,10 @@ public class Monitoring extends javax.swing.JFrame {
         loadLogo();
         startClock();
         startSerialListener();
+                rfidHandler = rawUid -> {
+            SwingUtilities.invokeLater(() -> muatDataKartu("", ""));
+            };
+            SerialService.getInstance().addHandler(rfidHandler);
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataKartu("", "");
     }

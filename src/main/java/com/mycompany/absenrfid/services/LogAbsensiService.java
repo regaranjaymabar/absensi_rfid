@@ -18,14 +18,15 @@ public class LogAbsensiService {
     private final GenericDAO<LogAbsensi> logDAO = new GenericDAO<>("LogAbsensi", LogAbsensi.class);
 
     public void simpanLog(String uid, String nama, String nim, String kelas, String status) {
-        LogAbsensi log = new LogAbsensi();
-        log.setWaktu(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        log.setUid_rfid(uid);
-        log.setNama(nama);
-        log.setNim(nim);
-        log.setKelas(kelas);
-        log.setStatus(status);
-        logDAO.save(log);
+    LogAbsensi log = new LogAbsensi();
+    log.setWaktu(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+    log.setUid_rfid(uid);
+    log.setNama(nama);
+    log.setNim(nim);
+    log.setKelas(kelas);
+    log.setStatus(status);
+    logDAO.save(log);
+    
     }
     
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import javax.swing.JLabel;
+import com.mycompany.absenrfid.services.I18nService;
 
 /**
  *
@@ -41,6 +42,9 @@ public class DigitalClockService {
                 System.out.println(Thread.currentThread().getName() + " dihentikan.");
             }
         };
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+    I18nService.get("ui.date.format"), I18nService.getCurrentLocale());
 
         return new Thread(clockTask);
     }
