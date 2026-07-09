@@ -3,8 +3,10 @@ package com.mycompany.absenrfid.view;
 import com.mycompany.absenrfid.objects.Visitor;
 import com.mycompany.absenrfid.services.VisitorService;
 import com.mycompany.absenrfid.util.EncryptionUtils;
+import com.mycompany.absenrfid.services.I18nService;
 
-public class EditVisitor extends javax.swing.JDialog {
+public class EditVisitor extends javax.swing.JDialog 
+    implements I18nService.I18nChangeListener {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditVisitor.class.getName());
     private String nimAsal; // simpan NIM asli untuk keperluan update
@@ -12,6 +14,8 @@ public class EditVisitor extends javax.swing.JDialog {
     public EditVisitor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     // Dipanggil dari DataVisitor sebelum setVisible(true)
@@ -31,6 +35,18 @@ public class EditVisitor extends javax.swing.JDialog {
             TextFieldUID.setText(decrypted != null ? decrypted : uid);
             }
         }
+    }
+    
+    @Override
+    public void onLanguageChanged() {
+        lblJudul.setText(I18nService.get("ui.title.editvisitor"));
+        lblNim.setText(I18nService.get("ui.label.nim"));
+        lblNama.setText(I18nService.get("ui.label.nama"));
+        lblJurusan.setText(I18nService.get("ui.label.jurusan"));
+        lblKelas.setText(I18nService.get("ui.label.kelas"));
+        lblUID.setText(I18nService.get("ui.label.uid"));
+        btnEdit.setText(I18nService.get("ui.btn.edit"));
+        btnBatal.setText(I18nService.get("ui.btn.batal"));
     }
 
     @SuppressWarnings("unchecked")
@@ -93,6 +109,11 @@ public class EditVisitor extends javax.swing.JDialog {
         pnlWadah.add(TextFieldUID, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 240, 210, -1));
 
         TextFieldNim.setBackground(new java.awt.Color(204, 204, 204));
+        TextFieldNim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                
+            }
+        });
         pnlWadah.add(TextFieldNim, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, 210, -1));
 
         TextFieldNama.setBackground(new java.awt.Color(204, 204, 204));
@@ -107,13 +128,21 @@ public class EditVisitor extends javax.swing.JDialog {
         btnBatal.setBackground(new java.awt.Color(204, 0, 0));
         btnBatal.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBatal.setText("Batal");
-        btnBatal.addActionListener(evt -> dispose());
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                
+            }
+        });
         pnlWadah.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, -1, -1));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 0));
         btnEdit.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnEdit.setText("Edit");
-        btnEdit.addActionListener(evt -> btnEditActionPerformed(evt));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
         pnlWadah.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -131,7 +160,6 @@ public class EditVisitor extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // Ambil data dari field dan simpan ke database via VisitorService
         Visitor v = new Visitor();
         v.setNim(TextFieldNim.getText().trim());
         v.setNama(TextFieldNama.getText().trim());
@@ -141,17 +169,21 @@ public class EditVisitor extends javax.swing.JDialog {
 
         if (v.getNim().isEmpty() || v.getNama().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "NIM dan Nama tidak boleh kosong!", "Validasi",
+                I18nService.get("ui.msg.nimnamakosongg"),
+                I18nService.get("ui.msg.validasi"),
                 javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         VisitorService service = new VisitorService();
-        service.update(nimAsal, v); // update berdasarkan NIM asli
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
+        service.update(nimAsal, v);
+        javax.swing.JOptionPane.showMessageDialog(this,
+            I18nService.get("ui.msg.editsukses"));
+        I18nService.unregisterListener(this);
         dispose();
     }//GEN-LAST:event_btnEditActionPerformed
 
+    
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

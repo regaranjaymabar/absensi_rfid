@@ -5,7 +5,8 @@ import com.mycompany.absenrfid.services.I18nService;
  * 
  * @author User
  */
-public class Pengaturan extends javax.swing.JFrame {
+public class Pengaturan extends javax.swing.JFrame 
+    implements I18nService.I18nChangeListener{
 
     private static final java.util.logging.Logger logger =
         java.util.logging.Logger.getLogger(Pengaturan.class.getName());
@@ -13,6 +14,9 @@ public class Pengaturan extends javax.swing.JFrame {
     public Pengaturan() {
         initComponents();
         loadLogo();
+        
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     private void loadLogo() {
@@ -24,6 +28,17 @@ public class Pengaturan extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.println("Gagal memuat logo: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public void onLanguageChanged() {
+        lblTitle.setText(I18nService.get("ui.title.pengaturan"));
+        lblSubtitle.setText(I18nService.get("ui.subtitle.pengaturan"));
+        lblbahasa.setText(I18nService.get("ui.label.bahasa"));
+        btnNavMonitoring.setText(I18nService.get("ui.nav.monitoring"));
+        btnNavVisitor.setText(I18nService.get("ui.nav.datavisitor"));
+        btnNavAbsensi.setText(I18nService.get("ui.nav.absensi"));
+        btnNavPengaturan.setText(I18nService.get("ui.nav.pengaturan"));
     }
 
     @SuppressWarnings("unchecked")
@@ -137,10 +152,12 @@ public class Pengaturan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNavMonitoringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavMonitoringActionPerformed
+        I18nService.unregisterListener(this);
         new Monitoring().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavMonitoringActionPerformed
 
     private void btnNavVisitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavVisitorActionPerformed
+        I18nService.unregisterListener(this);
         new DataVisitor().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavVisitorActionPerformed
 
@@ -152,7 +169,7 @@ public class Pengaturan extends javax.swing.JFrame {
         case "English":
             I18nService.setLocale(new java.util.Locale("en")); break;
         case "Spanyol":
-            I18nService.setLocale(new java.util.Locale("ms")); break;
+            I18nService.setLocale(new java.util.Locale("es")); break;
     }
     javax.swing.JOptionPane.showMessageDialog(this,
         "Bahasa diubah ke: " + pilihan, "Pengaturan",
@@ -160,6 +177,7 @@ public class Pengaturan extends javax.swing.JFrame {
     }//GEN-LAST:event_ComboBoxBahasaActionPerformed
 
     private void btnNavAbsensiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavAbsensiActionPerformed
+        I18nService.unregisterListener(this);
         new Absensi().setVisible(true); this.dispose();// TODO add your handling code here:
     }//GEN-LAST:event_btnNavAbsensiActionPerformed
 

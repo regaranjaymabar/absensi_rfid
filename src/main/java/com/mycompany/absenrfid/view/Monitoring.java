@@ -8,6 +8,7 @@ import com.mycompany.absenrfid.services.DigitalClockService;
 import com.mycompany.absenrfid.services.SerialService;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.mycompany.absenrfid.services.I18nService;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,8 @@ import javax.swing.*;
  *
  * @author user
  */
-public class Monitoring extends javax.swing.JFrame {
+public class Monitoring extends javax.swing.JFrame 
+    implements I18nService.I18nChangeListener{
 
     private static final java.util.logging.Logger logger =
         java.util.logging.Logger.getLogger(Monitoring.class.getName());
@@ -42,6 +44,9 @@ public class Monitoring extends javax.swing.JFrame {
             SerialService.getInstance().addHandler(rfidHandler);
         jScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataKartu("", "");
+        
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     private void loadLogo() {
@@ -167,8 +172,20 @@ public class Monitoring extends javax.swing.JFrame {
         SerialService.getInstance().removeHandler(rfidHandler);
     }
     target.setVisible(true);
+    I18nService.unregisterListener(this);
     this.dispose();
 }
+    @Override
+    public void onLanguageChanged() {
+        lblTitle.setText(I18nService.get("ui.title.monitoring"));
+        lblSubtitle.setText(I18nService.get("ui.subtitle.monitoring"));
+        lblVisitorLabel.setText(I18nService.get("ui.label.visitor"));
+        btnSimpanFilter.setText(I18nService.get("ui.btn.save"));
+        btnNavMonitoring.setText(I18nService.get("ui.nav.monitoring"));
+        btnNavVisitor.setText(I18nService.get("ui.nav.datavisitor"));
+        btnNavAbsensi.setText(I18nService.get("ui.nav.absensi"));
+        btnNavPengaturan.setText(I18nService.get("ui.nav.pengaturan"));
+    }
 
 
     @SuppressWarnings("unchecked")

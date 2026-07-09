@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.mycompany.absenrfid.services.I18nService;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,10 +16,11 @@ import java.util.List;
 import javax.swing.*;
 
 /**
- * DataVisitor - CRUD data visitor
- * @author NEXA
+ * 
+ * @author user
  */
-public class DataVisitor extends javax.swing.JFrame {
+public class DataVisitor extends javax.swing.JFrame 
+    implements I18nService.I18nChangeListener{
 
     private static final java.util.logging.Logger logger =
         java.util.logging.Logger.getLogger(DataVisitor.class.getName());
@@ -44,126 +46,131 @@ public class DataVisitor extends javax.swing.JFrame {
 
         JScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataKartu("");
-    }
-
-    private void loadLogo() {
-        try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("/Logo Profil.png"));
-            lblLogo.setIcon(new ImageIcon(
-                icon.getImage().getScaledInstance(130, 100, Image.SCALE_SMOOTH)));
-        } catch (Exception e) {
-            System.out.println("Gagal memuat logo: " + e.getMessage());
         }
-    }
 
-    // ── Ambil data dari MongoDB ───────────────────────────────────
-    private List<Document> ambilData(String keyword) {
-        MongoCollection<Document> col =
-            MongoManager.getDatabase().getCollection("Visitors");
-        List<Document> hasil = new ArrayList<>();
-        try {
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                Bson f = Filters.or(
-                    Filters.regex("nama",  keyword, "i"),
-                    Filters.regex("nim",   keyword, "i"),
-                    Filters.regex("kelas", keyword, "i")
-                );
-                col.find(f).into(hasil);
+        private void loadLogo() {
+            try {
+                ImageIcon icon = new ImageIcon(getClass().getResource("/Logo Profil.png"));
+                lblLogo.setIcon(new ImageIcon(
+                    icon.getImage().getScaledInstance(130, 100, Image.SCALE_SMOOTH)));
+            } catch (Exception e) {
+                System.out.println("Gagal memuat logo: " + e.getMessage());
+            }
+        }
+
+        // ── Ambil data dari MongoDB ───────────────────────────────────
+        private List<Document> ambilData(String keyword) {
+            MongoCollection<Document> col =
+                MongoManager.getDatabase().getCollection("Visitors");
+            List<Document> hasil = new ArrayList<>();
+            try {
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    Bson f = Filters.or(
+                        Filters.regex("nama",  keyword, "i"),
+                        Filters.regex("nim",   keyword, "i"),
+                        Filters.regex("kelas", keyword, "i")
+                    );
+                    col.find(f).into(hasil);
+                } else {
+                    col.find().into(hasil);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Gagal koneksi MongoDB:\n" + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+            return hasil;
+        }
+
+        // ── Tampilkan kartu merah ─────────────────────────────────────
+        private void muatDataKartu(String keyword) {
+            pnlCardContainer.removeAll();
+            pnlCardContainer.setBackground(new Color(230, 230, 230));
+
+            List<Document> listData = ambilData(keyword);
+            lblVisitorCount.setText(String.valueOf(listData.size()));
+
+            if (listData.isEmpty()) {
+                pnlCardContainer.setLayout(new BorderLayout());
+                JLabel lbl = new JLabel("Tidak ada data.", SwingConstants.CENTER);
+                lbl.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                lbl.setForeground(Color.GRAY);
+                pnlCardContainer.add(lbl, BorderLayout.CENTER);
             } else {
-                col.find().into(hasil);
+                pnlCardContainer.setLayout(new java.awt.GridLayout(0, 3, 8, 8));
+                for (Document doc : listData) {
+                    pnlCardContainer.add(buatKartu(doc));
+                }
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Gagal koneksi MongoDB:\n" + e.getMessage(), "Error",
-                JOptionPane.ERROR_MESSAGE);
+            pnlCardContainer.revalidate();
+            pnlCardContainer.repaint();
         }
-        return hasil;
-    }
+    
+    
 
-    // ── Tampilkan kartu merah ─────────────────────────────────────
-    private void muatDataKartu(String keyword) {
-        pnlCardContainer.removeAll();
-        pnlCardContainer.setBackground(new Color(230, 230, 230));
+        // ── Buat satu kartu merah dengan tombol Edit & Hapus ─────────
+        private JPanel buatKartu(Document doc) {
+            String nim   = nvl(doc.getString("nim"));
+            String nama  = nvl(doc.getString("nama"));
+            String kelas = nvl(doc.getString("kelas"));
+            String uid   = nvl(doc.getString("uid_rfid"));
 
-        List<Document> listData = ambilData(keyword);
-        lblVisitorCount.setText(String.valueOf(listData.size()));
+            JPanel card = new JPanel();
+            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+            card.setBackground(new Color(153, 0, 0));
+            card.setPreferredSize(new Dimension(326, 120));
+            card.setMaximumSize(new Dimension(326, 120));
+            card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(8, 10, 6, 10)
+            ));
 
-        if (listData.isEmpty()) {
-            pnlCardContainer.setLayout(new BorderLayout());
-            JLabel lbl = new JLabel("Tidak ada data.", SwingConstants.CENTER);
-            lbl.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-            lbl.setForeground(Color.GRAY);
-            pnlCardContainer.add(lbl, BorderLayout.CENTER);
-        } else {
-            pnlCardContainer.setLayout(new java.awt.GridLayout(0, 3, 8, 8));
-            for (Document doc : listData) {
-                pnlCardContainer.add(buatKartu(doc));
-            }
-        }
-        pnlCardContainer.revalidate();
-        pnlCardContainer.repaint();
-    }
+            card.add(buatLabel("Nama: " + nama,         Font.BOLD,  12, Color.WHITE));
+            card.add(Box.createVerticalStrut(2));
+            card.add(buatLabel("NIM: " + nim,      Font.PLAIN, 11, new Color(210, 210, 210)));
+            card.add(Box.createVerticalStrut(2));
+            card.add(buatLabel("Kelas: " + kelas,  Font.PLAIN, 11, new Color(210, 210, 210)));
+            card.add(Box.createVerticalStrut(2));
+            card.add(buatLabel("UID: " + uid,       Font.PLAIN, 10, new Color(190, 190, 190)));
+            card.add(Box.createVerticalStrut(6));
 
-    // ── Buat satu kartu merah dengan tombol Edit & Hapus ─────────
-    private JPanel buatKartu(Document doc) {
-        String nim   = nvl(doc.getString("nim"));
-        String nama  = nvl(doc.getString("nama"));
-        String kelas = nvl(doc.getString("kelas"));
-        String uid   = nvl(doc.getString("uid_rfid"));
+            // Panel tombol Edit & Hapus
+            JPanel pnlBtn = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+            pnlBtn.setBackground(new Color(153, 0, 0));
+            pnlBtn.setOpaque(true);
 
-        JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(new Color(153, 0, 0));
-        card.setPreferredSize(new Dimension(326, 120));
-        card.setMaximumSize(new Dimension(326, 120));
-        card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(8, 10, 6, 10)
-        ));
-
-        card.add(buatLabel("Nama: " + nama,         Font.BOLD,  12, Color.WHITE));
-        card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("NIM: " + nim,      Font.PLAIN, 11, new Color(210, 210, 210)));
-        card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("Kelas: " + kelas,  Font.PLAIN, 11, new Color(210, 210, 210)));
-        card.add(Box.createVerticalStrut(2));
-        card.add(buatLabel("UID: " + uid,       Font.PLAIN, 10, new Color(190, 190, 190)));
-        card.add(Box.createVerticalStrut(6));
-
-        // Panel tombol Edit & Hapus
-        JPanel pnlBtn = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        pnlBtn.setBackground(new Color(153, 0, 0));
-        pnlBtn.setOpaque(true);
-
-        JButton btnEdit = new JButton("Edit");
-        btnEdit.setBackground(new Color(255, 153, 0));
-        btnEdit.setForeground(Color.WHITE);
-        btnEdit.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        btnEdit.setFocusPainted(false);
-        btnEdit.setPreferredSize(new Dimension(60, 22));
-        btnEdit.addActionListener(e -> {
-            EditVisitor dialog = new EditVisitor((Frame) SwingUtilities.getWindowAncestor(this), true);
-            dialog.setNim(nim);
-            dialog.setLocationRelativeTo(this);
-            dialog.setVisible(true);
-            muatDataKartu(""); // refresh
-        });
-
-        JButton btnHapus = new JButton("Hapus");
-        btnHapus.setBackground(new Color(204, 0, 0));
-        btnHapus.setForeground(Color.WHITE);
-        btnHapus.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        btnHapus.setFocusPainted(false);
-        btnHapus.setPreferredSize(new Dimension(60, 22));
-        btnHapus.addActionListener(e -> {
-            int konfirm = JOptionPane.showConfirmDialog(this,
-                "Yakin hapus data: " + nama + "?", "Konfirmasi Hapus",
-                JOptionPane.YES_NO_OPTION);
-            if (konfirm == JOptionPane.YES_OPTION) {
-                visitorService.hapus(nim);
+            JButton btnEdit = new JButton("Edit");
+            btnEdit.setBackground(new Color(255, 153, 0));
+            btnEdit.setForeground(Color.WHITE);
+            btnEdit.setFont(new Font("Segoe UI", Font.BOLD, 10));
+            btnEdit.setFocusPainted(false);
+            btnEdit.setPreferredSize(new Dimension(60, 22));
+            btnEdit.addActionListener(e -> {
+                EditVisitor dialog = new EditVisitor((Frame) SwingUtilities.getWindowAncestor(this), true);
+                dialog.setNim(nim);
+                dialog.setLocationRelativeTo(this);
+                dialog.setVisible(true);
                 muatDataKartu(""); // refresh
-            }
-        });
+            });
+
+            JButton btnHapus = new JButton("Hapus");
+            btnHapus.setBackground(new Color(204, 0, 0));
+            btnHapus.setForeground(Color.WHITE);
+            btnHapus.setFont(new Font("Segoe UI", Font.BOLD, 10));
+            btnHapus.setFocusPainted(false);
+            btnHapus.setPreferredSize(new Dimension(60, 22));
+            btnHapus.addActionListener(e -> {
+                int konfirm = JOptionPane.showConfirmDialog(this,
+                    "Yakin hapus data: " + nama + "?", "Konfirmasi Hapus",
+                    JOptionPane.YES_NO_OPTION);
+                if (konfirm == JOptionPane.YES_OPTION) {
+                    visitorService.hapus(nim);
+                    muatDataKartu(""); // refresh
+                }
+
+                I18nService.registerListener(this);
+                onLanguageChanged();
+            });
 
         pnlBtn.add(btnEdit);
         pnlBtn.add(btnHapus);
@@ -179,6 +186,21 @@ public class DataVisitor extends javax.swing.JFrame {
     }
 
     private String nvl(String s) { return (s != null && !s.isEmpty()) ? s : "-"; }
+    
+    @Override
+    public void onLanguageChanged() {
+        lblTitle.setText(I18nService.get("ui.title.datavisitor"));
+        lblSubtitle.setText(I18nService.get("ui.subtitle.datavisitor"));
+        lblVisitorLabel.setText(I18nService.get("ui.label.jumlahvisitor"));
+        btnSimpan.setText(I18nService.get("ui.btn.save"));
+        btnTambah.setText(I18nService.get("ui.btn.tambah"));
+        btnUpdate.setText(I18nService.get("ui.btn.update"));
+        btnRefresh.setText(I18nService.get("ui.btn.refresh"));
+        btnNavMonitoring.setText(I18nService.get("ui.nav.monitoring"));
+        btnNavVisitor.setText(I18nService.get("ui.nav.datavisitor"));
+        btnNavAbsensi.setText(I18nService.get("ui.nav.absensi"));
+        btnNavPengaturan.setText(I18nService.get("ui.nav.pengaturan"));
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -362,18 +384,21 @@ public class DataVisitor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNavMonitoringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavMonitoringActionPerformed
+        I18nService.unregisterListener(this);
         new Monitoring().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavMonitoringActionPerformed
 
     private void btnNavVisitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavVisitorActionPerformed
-        // sudah di halaman ini
+        I18nService.unregisterListener(this);// sudah di halaman ini
     }//GEN-LAST:event_btnNavVisitorActionPerformed
 
     private void btnNavAbsensiActionPerformed(java.awt.event.ActionEvent evt) {
+        I18nService.unregisterListener(this);
         new Absensi().setVisible(true); this.dispose();
     }
 
     private void btnNavPengaturanActionPerformed(java.awt.event.ActionEvent evt) {
+        I18nService.unregisterListener(this);
         new Pengaturan().setVisible(true); this.dispose();
     }
 

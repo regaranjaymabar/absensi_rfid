@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.mycompany.absenrfid.services.I18nService;
 
 import java.awt.*;
 import java.io.FileWriter;
@@ -16,7 +17,8 @@ import javax.swing.*;
  * 
  * @author user
  */
-public class Absensi extends javax.swing.JFrame {
+public class Absensi extends javax.swing.JFrame 
+    implements I18nService.I18nChangeListener{
 
     private static final java.util.logging.Logger logger =
         java.util.logging.Logger.getLogger(Absensi.class.getName());
@@ -27,6 +29,10 @@ public class Absensi extends javax.swing.JFrame {
         loadLogo();
         JScrollPane.setBorder(BorderFactory.createEmptyBorder());
         muatDataAbsensi("");
+        
+        I18nService.registerListener(this);
+        onLanguageChanged();
+        
     }
 
     private void loadLogo() {
@@ -125,6 +131,21 @@ public class Absensi extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Gagal: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    @Override
+    public void onLanguageChanged() {
+        lblTitle.setText(I18nService.get("ui.title.absensi"));
+        lblSubtitle.setText(I18nService.get("ui.subtitle.absensi"));
+        lblVisitorLabel.setText(I18nService.get("ui.label.jumlahdata"));
+        lblTgl.setText(I18nService.get("ui.label.tanggal"));
+        btnSimpanFilter.setText(I18nService.get("ui.btn.save"));
+        btnExportcsv.setText(I18nService.get("ui.btn.exportcsv"));
+        btnTampilkanAbsen.setText(I18nService.get("ui.btn.tampilkanabsen"));
+        btnNavMonitoring.setText(I18nService.get("ui.nav.monitoring"));
+        btnNavVisitor.setText(I18nService.get("ui.nav.datavisitor"));
+        btnNavAbsensi.setText(I18nService.get("ui.nav.absensi"));
+        btnNavPengaturan.setText(I18nService.get("ui.nav.pengaturan"));
+    }
 
     private String q(String s) { return "\"" + (s != null ? s.replace("\"","\"\"") : "") + "\""; }
     private JLabel buatLabel(String t, int style, int size, Color c) {
@@ -156,7 +177,7 @@ public class Absensi extends javax.swing.JFrame {
         pnlCardContainer = new javax.swing.JPanel();
         lblTgl = new javax.swing.JLabel();
         btnExportcsv = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnTampilkanAbsen = new javax.swing.JButton();
         jDate = new com.toedter.calendar.JDateChooser();
         cbFilterProdi = new javax.swing.JComboBox<>();
         cbFilterKelas = new javax.swing.JComboBox<>();
@@ -272,14 +293,14 @@ public class Absensi extends javax.swing.JFrame {
         });
         pnlContent.add(btnExportcsv, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 130, -1, 30));
 
-        jButton1.setBackground(new java.awt.Color(255, 255, 0));
-        jButton1.setText("Tampilkan Menu Absen");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnTampilkanAbsen.setBackground(new java.awt.Color(255, 255, 0));
+        btnTampilkanAbsen.setText("Tampilkan Menu Absen");
+        btnTampilkanAbsen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnTampilkanAbsenActionPerformed(evt);
             }
         });
-        pnlContent.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 120, 160, 40));
+        pnlContent.add(btnTampilkanAbsen, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 120, 160, 40));
 
         jDate.setAutoscrolls(true);
         pnlContent.add(jDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 140, -1));
@@ -316,6 +337,7 @@ public class Absensi extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNavVisitorActionPerformed
 
     private void btnExportcsvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportcsvActionPerformed
+        I18nService.unregisterListener(this);
         exportCSV();
     }//GEN-LAST:event_btnExportcsvActionPerformed
 
@@ -325,14 +347,16 @@ public class Absensi extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimpanFilterActionPerformed
 
     private void btnTampilkanAbsenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanAbsenActionPerformed
+        I18nService.unregisterListener(this);
         new MenuAbsen().setVisible(true);
     }//GEN-LAST:event_btnTampilkanAbsenActionPerformed
 
     private void btnNavAbsensiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavAbsensiActionPerformed
-        // sudah di halaman ini
+        I18nService.unregisterListener(this);// sudah di halaman ini
     }//GEN-LAST:event_btnNavAbsensiActionPerformed
 
     private void btnNavPengaturanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNavPengaturanActionPerformed
+        I18nService.unregisterListener(this);
         new Pengaturan().setVisible(true); this.dispose();
     }//GEN-LAST:event_btnNavPengaturanActionPerformed
 
@@ -341,10 +365,6 @@ public class Absensi extends javax.swing.JFrame {
 
     private void cbFilterKelasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFilterKelasActionPerformed
     }//GEN-LAST:event_cbFilterKelasActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new MenuAbsen().setVisible(true);// TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -363,9 +383,9 @@ public class Absensi extends javax.swing.JFrame {
     private javax.swing.JButton btnNavPengaturan;
     private javax.swing.JButton btnNavVisitor;
     private javax.swing.JButton btnSimpanFilter;
+    private javax.swing.JButton btnTampilkanAbsen;
     private javax.swing.JComboBox<String> cbFilterKelas;
     private javax.swing.JComboBox<String> cbFilterProdi;
-    private javax.swing.JButton jButton1;
     private com.toedter.calendar.JDateChooser jDate;
     private javax.swing.JLabel lblAdminName;
     private javax.swing.JLabel lblAdminProfile;

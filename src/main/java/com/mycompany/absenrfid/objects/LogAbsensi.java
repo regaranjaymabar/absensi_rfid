@@ -3,7 +3,7 @@ package com.mycompany.absenrfid.objects;
 /**
  * Model untuk koleksi LogAbsensi di MongoDB
  * Field disesuaikan dengan nama field di database
- * @author user
+ * @author suci
  */
 public class LogAbsensi {
     private String waktu;

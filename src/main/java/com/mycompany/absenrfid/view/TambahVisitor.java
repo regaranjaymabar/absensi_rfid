@@ -2,64 +2,76 @@ package com.mycompany.absenrfid.view;
 
 import com.mycompany.absenrfid.services.VisitorService;
 import com.mycompany.absenrfid.objects.Visitor;
+import com.mycompany.absenrfid.services.I18nService;
 
 /**
  *
  * @author Regar
  */
-public class TambahVisitor extends javax.swing.JDialog {
+public class TambahVisitor extends javax.swing.JDialog
+    implements I18nService.I18nChangeListener{
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TambahVisitor.class.getName());
     private final VisitorService visitorService = new VisitorService();
 
     public TambahVisitor(java.awt.Frame parent, boolean modal) {
-        initComponents();
-    }
+    super(parent, modal);
+    initComponents();
+    I18nService.registerListener(this);
+    onLanguageChanged();
+}
 
-  private void simpanData() {
-        // 1. Ambil data dari text field ke dalam variabel
-        String nim = TextFieldNim.getText().trim();
-        String nama = TextFieldNama.getText().trim();
-        String jurusan = TextFieldJurusan.getText().trim();
-        String kelas = TextFieldKelas.getText().trim();
-        String uid = TextFieldUID.getText().trim();
+    private void simpanData() {
+      String nim = TextFieldNim.getText().trim();
+      String nama = TextFieldNama.getText().trim();
+      String jurusan = TextFieldJurusan.getText().trim();
+      String kelas = TextFieldKelas.getText().trim();
+      String uid = TextFieldUID.getText().trim();
 
-        // 2. Validasi Input agar tidak kosong
-        if (nim.isEmpty() || nama.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "NIM dan Nama wajib diisi!", "Peringatan", 
-                javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+      if (nim.isEmpty() || nama.isEmpty()) {
+          javax.swing.JOptionPane.showMessageDialog(this,
+              I18nService.get("ui.msg.nimnamakosongg"),
+              I18nService.get("ui.msg.validasi"),
+              javax.swing.JOptionPane.WARNING_MESSAGE);
+          return;
+      }
 
-        try {
-            // 3. Masukkan data ke objek Visitor
-            Visitor v = new Visitor();
-            v.setNim(nim);
-            v.setNama(nama);
-            v.setJurusan(jurusan);
-            v.setKelas(kelas);
-            v.setUid_rfid(uid);
-            
-            // 4. Simpan langsung menggunakan visitorDAO (versi awal Anda)
-            visitorService.tambah(v);
-            
-            // 5. Notifikasi sukses dan tutup form
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Data berhasil disimpan!", "Informasi", 
-                javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Gagal menyimpan data ke database!\nError: " + e.getMessage(), "Error", 
-                javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    }
+      try {
+          Visitor v = new Visitor();
+          v.setNim(nim);
+          v.setNama(nama);
+          v.setJurusan(jurusan);
+          v.setKelas(kelas);
+          v.setUid_rfid(uid);
+          visitorService.tambah(v);
+          javax.swing.JOptionPane.showMessageDialog(this,
+              I18nService.get("ui.msg.simpansukses"),
+              I18nService.get("ui.msg.validasi"),
+              javax.swing.JOptionPane.INFORMATION_MESSAGE);
+          I18nService.unregisterListener(this);
+          dispose();
+      } catch (Exception e) {
+          javax.swing.JOptionPane.showMessageDialog(this,
+              I18nService.get("ui.msg.galalsimpan") + "\n" + e.getMessage(),
+              I18nService.get("ui.msg.error"),
+              javax.swing.JOptionPane.ERROR_MESSAGE);
+      }
+  }
+        @Override
+      public void onLanguageChanged() {
+          lblJudul.setText(I18nService.get("ui.title.tambahvisitor"));
+          lblNim.setText(I18nService.get("ui.label.nim"));
+          lblNama.setText(I18nService.get("ui.label.nama"));
+          lblJurusan.setText(I18nService.get("ui.label.jurusan"));
+          lblKelas.setText(I18nService.get("ui.label.kelas"));
+          lblUID.setText(I18nService.get("ui.label.uid"));
+          btnSimpan.setText(I18nService.get("ui.btn.simpan"));
+          btnBatal.setText(I18nService.get("ui.btn.batal"));
+      }
   
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {
-        dispose(); 
+        I18nService.unregisterListener(this);
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
